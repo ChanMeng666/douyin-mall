@@ -23,8 +23,6 @@ public class Order {
     private String payType;
     /** 订单支付时间*/
     private Date payTime;
-    /** 发货时间*/
-    private Date deliveryTime;
     /** 订单创建时间*/
     private Date createTime;
     /** 更新时间*/

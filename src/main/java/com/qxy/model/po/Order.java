@@ -14,11 +14,11 @@ public class Order {
     /** 订单Id*/
     private Integer orderId;
     /** 用户Id*/
-    private Long userId;
+    private Integer userId;
     /** 订单状态 1.pay_wait【未付款】 2.pay_unshipped【已支付，未发货】 3.shipped【已发货】 4.Cancelled【取消】*/
     private String status;
     /** 订单总价*/
-    private BigDecimal totalPrice;
+    private BigDecimal totalAmount;
     /** 支付方式  1.【支付宝】  2.【微信】*/
     private String payType;
     /** 订单支付时间*/

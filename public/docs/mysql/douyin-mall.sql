@@ -2,7 +2,7 @@ CREATE DATABASE IF NOT EXISTS douyin_mall DEFAULT CHARACTER SET utf8mb4 COLLATE 
 USE douyin_mall;
 -- 用户表
 CREATE TABLE users (
-    id int unsigned NOT NULL AUTO_INCREMENT COMMENT '自增ID',
+
     user_id INT AUTO_INCREMENT PRIMARY KEY,
     username VARCHAR(255) NOT NULL UNIQUE,
     password VARCHAR(255) NOT NULL,
@@ -14,7 +14,7 @@ CREATE TABLE users (
 );
 -- 商品表
 CREATE TABLE products (
-    id int unsigned NOT NULL AUTO_INCREMENT COMMENT '自增ID',
+
     product_id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
     description TEXT,
@@ -26,7 +26,6 @@ CREATE TABLE products (
 );
 -- 购物车表
 CREATE TABLE carts (
-    id int unsigned NOT NULL AUTO_INCREMENT COMMENT '自增ID',
     cart_id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -36,11 +35,11 @@ CREATE TABLE carts (
 
 -- 购物车商品表
 CREATE TABLE cart_items (
-    id int unsigned NOT NULL AUTO_INCREMENT COMMENT '自增ID',
     cart_item_id INT AUTO_INCREMENT PRIMARY KEY,
     cart_id INT NOT NULL,
     product_id INT NOT NULL,
     quantity INT NOT NULL,
+    total_price DECIMAL(10, 2) NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     INDEX (cart_id),
@@ -49,7 +48,6 @@ CREATE TABLE cart_items (
 
 -- 订单表
 CREATE TABLE orders (
-    id int unsigned NOT NULL AUTO_INCREMENT COMMENT '自增ID',
     order_id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,
     total_amount DECIMAL(10, 2) NOT NULL,
@@ -63,7 +61,6 @@ CREATE TABLE orders (
 
 -- 订单商品表
 CREATE TABLE order_items (
-    id int unsigned NOT NULL AUTO_INCREMENT COMMENT '自增ID',
     order_item_id INT AUTO_INCREMENT PRIMARY KEY,
     order_id INT NOT NULL,
     product_id INT NOT NULL,
@@ -77,7 +74,7 @@ CREATE TABLE order_items (
 
 -- 结算表
 CREATE TABLE settlements (
-    id int unsigned NOT NULL AUTO_INCREMENT COMMENT '自增ID',
+
     settlement_id INT AUTO_INCREMENT PRIMARY KEY,
     order_id INT NOT NULL,
     amount DECIMAL(10, 2) NOT NULL,
@@ -89,7 +86,6 @@ CREATE TABLE settlements (
 
 -- 支付表
 CREATE TABLE payments (
-    id int unsigned NOT NULL AUTO_INCREMENT COMMENT '自增ID',
     payment_id INT AUTO_INCREMENT PRIMARY KEY,
     order_id INT NOT NULL,
     amount DECIMAL(10, 2) NOT NULL,
@@ -101,7 +97,6 @@ CREATE TABLE payments (
 
 -- 订单查询表
 CREATE TABLE order_queries (
-    id int unsigned NOT NULL AUTO_INCREMENT COMMENT '自增ID',
     query_id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,
     query TEXT NOT NULL,

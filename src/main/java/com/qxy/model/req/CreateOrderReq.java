@@ -1,6 +1,5 @@
 package com.qxy.model.req;
 
-import com.qxy.model.po.Address;
 import com.qxy.model.po.CartItem;
 import lombok.Data;
 
@@ -16,6 +15,5 @@ import java.util.List;
 public class CreateOrderReq {
     private Long userId;            // 用户ID
     private List<CartItem> cartItems;  // 购物车项列表
-    private Address shippingAddress;   // 送货地址
-    private String paymentMethod;      // 支付方式，例如 "alipay", "wechat"
+    private String payType;      // 支付方式，例如 "alipay", "wechat"
 }

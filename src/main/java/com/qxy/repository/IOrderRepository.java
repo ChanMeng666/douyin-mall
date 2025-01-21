@@ -1,5 +1,7 @@
 package com.qxy.repository;
 
+import com.qxy.model.po.Order;
+
 /**
  * @Author: dawang
  * @Description: 订单表仓储接口
@@ -7,4 +9,5 @@ package com.qxy.repository;
  * @Version: 1.0
  */
 public interface IOrderRepository {
+    void createOrder(Order order);
 }

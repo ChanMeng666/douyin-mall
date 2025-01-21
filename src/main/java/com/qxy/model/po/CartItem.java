@@ -14,11 +14,11 @@ import java.util.Date;
 @Data
 public class CartItem {
     /** 购物车项ID */
-    private Long cartItemId;
+    private Integer cartItemId;
     /** 购物车ID */
-    private Long cartId;
+    private Integer cartId;
     /** 商品ID */
-    private Long productId;
+    private Integer productId;
     /** 商品数量 */
     private Integer quantity;
     /** 商品价格 */

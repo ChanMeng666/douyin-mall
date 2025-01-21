@@ -13,7 +13,12 @@ import java.util.List;
  */
 @Data
 public class CreateOrderReq {
-    private Long userId;            // 用户ID
-    private List<CartItem> cartItems;  // 购物车项列表
-    private String payType;      // 支付方式，例如 "alipay", "wechat"
+    /** 用户ID */
+    private Integer userId;
+    /** 购物车ID */
+    private Integer cartId;
+    /** 购物车商品列表 */
+    private List<CartItem> cartItems;
+    /** 支付方式 */
+    private String payType;
 }

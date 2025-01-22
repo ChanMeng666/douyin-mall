@@ -8,8 +8,8 @@ import org.apache.ibatis.annotations.Options;
 @Mapper
 public interface ProductMapper {
 
-    @Insert("insert into product (product_name,product_description,product_price,image_url) " +
-            " values (#{productName},#{productDescription},#{productPrice},#{imageUrl})")
-    @Options(useGeneratedKeys = true,keyProperty = "id",keyColumn = "id")
+    @Insert("insert into product (name,description,price,image_url,stock) " +
+            " values (#{name},#{description},#{price},#{imageUrl},#{stock})")
+    @Options(useGeneratedKeys = true,keyProperty = "id",keyColumn = "product_id")
     void insert(ProductDO productDO);
 }

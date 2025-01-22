@@ -11,7 +11,7 @@ public class BaseDO implements Serializable {
     //主键
     private Long id;
     //创建时间
-    private Date gmtCreate;
+    private Date created_at;
     //修改时间
-    private Date gmtModified;
+    private Date updated_at;
 }

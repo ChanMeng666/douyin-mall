@@ -27,4 +27,9 @@ public class ProductDO extends BaseDO{
      * 描述
      */
     private String productDescription;
+
+    /**
+     * 存货量
+     */
+    private Integer stock;
 }

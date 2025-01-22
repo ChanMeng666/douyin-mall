@@ -15,9 +15,11 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 public class CreateProductParam implements Serializable {
     //商品名
-    private String productName;
+    private String name;
     //商品描述
-    private String productDescription;
+    private String description;
     //商品价格
-    private BigDecimal productPrice;
+    private BigDecimal price;
+    //存货量
+    private Integer stock;
 }

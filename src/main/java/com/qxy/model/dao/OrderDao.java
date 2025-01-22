@@ -1,5 +1,6 @@
 package com.qxy.model.dao;
 
+import com.qxy.model.po.Order;
 import org.apache.ibatis.annotations.Mapper;
 
 /**
@@ -10,5 +11,6 @@ import org.apache.ibatis.annotations.Mapper;
  */
 
 @Mapper
-public class orderDao {
+public interface OrderDao {
+   void createOrder(Order order);
 }

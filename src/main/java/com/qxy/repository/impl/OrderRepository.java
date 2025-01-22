@@ -1,7 +1,11 @@
 package com.qxy.repository.impl;
 
+import com.qxy.model.dao.OrderDao;
+import com.qxy.model.po.Order;
 import com.qxy.repository.IOrderRepository;
 import org.springframework.stereotype.Repository;
+
+import javax.annotation.Resource;
 
 /**
  * @Author: dawang
@@ -11,4 +15,10 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public class OrderRepository implements IOrderRepository {
+    @Resource
+    private OrderDao orderDao;
+    @Override
+    public void createOrder(Order order) {
+        orderDao.createOrder(order);
+    }
 }

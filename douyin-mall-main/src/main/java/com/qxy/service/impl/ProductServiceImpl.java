@@ -23,9 +23,10 @@ public class ProductServiceImpl implements ProductService {
         String fileName = pictureService.savePicture(multipartFile);
         //存表
         ProductDO productDO = new ProductDO();
-        productDO.setProductName(param.getProductName());
-        productDO.setProductPrice(param.getProductPrice());
-        productDO.setDescription(param.getProductDescription());
+        productDO.setName(param.getName());
+        productDO.setDescription(param.getDescription());
+        productDO.setStock(param.getStock());
+        productDO.setPrice(param.getPrice());
         productDO.setImageUrl(fileName);
         productMapper.insert(productDO);
         return productDO.getId();

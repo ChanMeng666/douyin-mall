@@ -11,7 +11,7 @@ public class ProductDO extends BaseDO{
     /**
      * 奖品名
      */
-    private String productName;
+    private String name;
 
     /**
      * 图片索引
@@ -21,12 +21,12 @@ public class ProductDO extends BaseDO{
     /**
      * 价格
      */
-    private BigDecimal productPrice;
+    private BigDecimal price;
 
     /**
      * 描述
      */
-    private String productDescription;
+    private String description;
 
     /**
      * 存货量

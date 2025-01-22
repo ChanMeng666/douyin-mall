@@ -1,5 +1,0 @@
-spring:
-  config:
-    name: douyin-mall
-  profiles:
-    active: dev

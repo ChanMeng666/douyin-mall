@@ -11,10 +11,8 @@ import com.qxy.service.IOrderService;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
+
 
 /**
  * @Author: dawang
@@ -29,6 +27,13 @@ public class OrderServiceImpl implements IOrderService {
 
     @Resource
     private IOrderItemsRepository orderItemsRepository;
+
+    /**
+     * 创建订单
+     *
+     * @param createOrderReq 创建订单请求
+     * @return 订单响应
+     */
     @Override
     public OrderRes createOrder(CreateOrderReq createOrderReq) {
         Order order = new Order();
@@ -59,8 +64,19 @@ public class OrderServiceImpl implements IOrderService {
         orderRepository.createOrder(order);
 
         //保存订单商品项
-//        orderItemsRepository.createOrderItems(order.getOrderId(), cartItems);
+        orderItemsRepository.insertOrderItems(order.getOrderId(), cartItems);
 
-        return null;
+        //清除购物车商品
+
+        //减少对应商品库存
+
+        //返回订单响应
+
+        return OrderRes.builder()
+                .status(Constants.OrderStatus.CREATE.getCode())
+                .orderId(order.getOrderId())
+                .totalAmount(order.getTotalAmount())
+                .actualAmount(order.getTotalAmount())
+                .build();
     }
 }

@@ -1,6 +1,10 @@
 package com.qxy.model.dao;
 
+import com.qxy.model.po.CartItem;
+import com.qxy.model.po.OrderItems;
 import org.apache.ibatis.annotations.Mapper;
+
+import java.util.List;
 
 /**
  * @Author: dawang
@@ -9,5 +13,7 @@ import org.apache.ibatis.annotations.Mapper;
  * @Version: 1.0
  */
 @Mapper
-public class OrderItemsDao {
+public interface OrderItemsDao {
+
+    void insertOrderItems(OrderItems orderItems);
 }

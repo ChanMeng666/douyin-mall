@@ -1,5 +1,9 @@
 package com.qxy.repository;
 
+import com.qxy.model.po.CartItem;
+
+import java.util.List;
+
 /**
  * @Author: dawang
  * @Description: 订单商品表仓储接口
@@ -7,4 +11,5 @@ package com.qxy.repository;
  * @Version: 1.0
  */
 public interface IOrderItemsRepository {
+    void insertOrderItems(Integer orderId, List<CartItem> cartItems);
 }

@@ -14,7 +14,6 @@ CREATE TABLE users (
 );
 -- 商品表
 CREATE TABLE products (
-
     product_id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
     description TEXT,

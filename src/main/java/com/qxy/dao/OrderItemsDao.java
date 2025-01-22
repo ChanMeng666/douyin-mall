@@ -1,10 +1,7 @@
-package com.qxy.model.dao;
+package com.qxy.dao;
 
-import com.qxy.model.po.CartItem;
 import com.qxy.model.po.OrderItems;
 import org.apache.ibatis.annotations.Mapper;
-
-import java.util.List;
 
 /**
  * @Author: dawang

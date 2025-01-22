@@ -1,10 +1,11 @@
 package com.qxy.repository.impl;
 
-import com.qxy.model.dao.OrderItemsDao;
+import com.qxy.dao.OrderItemsDao;
 import com.qxy.model.po.CartItem;
 import com.qxy.model.po.OrderItems;
 import com.qxy.repository.IOrderItemsRepository;
 
+import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,6 +16,7 @@ import java.util.List;
  * @Version: 1.0
  */
 public class OrderItemsRepository implements IOrderItemsRepository {
+    @Resource
     private OrderItemsDao orderItemsDao;
     @Override
     public void insertOrderItems(Integer orderId, List<CartItem> cartItems) {

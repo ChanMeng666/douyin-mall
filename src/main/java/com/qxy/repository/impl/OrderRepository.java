@@ -1,6 +1,6 @@
 package com.qxy.repository.impl;
 
-import com.qxy.model.dao.OrderDao;
+import com.qxy.dao.OrderDao;
 import com.qxy.model.po.Order;
 import com.qxy.repository.IOrderRepository;
 import org.springframework.stereotype.Repository;

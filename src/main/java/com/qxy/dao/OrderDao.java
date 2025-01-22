@@ -1,4 +1,4 @@
-package com.qxy.model.dao;
+package com.qxy.dao;
 
 import com.qxy.model.po.Order;
 import org.apache.ibatis.annotations.Mapper;

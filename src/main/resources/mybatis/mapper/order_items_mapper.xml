@@ -10,5 +10,9 @@
         <result column="create_at" property="createAt"/>
         <result column="update_at" property="updateAt"/>
     </resultMap>
+    <insert id="insertOrderItems">
+        insert into order_items (order_id, product_id, quantity, price, create_at, update_at)
+        values (#{orderId}, #{productId}, #{quantity}, #{price}, now(), now())
+    </insert>
 
 </mapper>

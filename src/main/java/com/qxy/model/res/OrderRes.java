@@ -1,7 +1,11 @@
 package com.qxy.model.res;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
+import javax.persistence.criteria.CriteriaBuilder;
 import java.math.BigDecimal;
 
 /**
@@ -11,8 +15,11 @@ import java.math.BigDecimal;
  * @Version: 1.0
  */
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class OrderRes {
-    private String orderId;         // 订单ID
+    private Integer orderId;         // 订单ID
     private BigDecimal totalAmount; // 订单总金额
     private BigDecimal actualAmount; // 实际支付金额
     private String status;          // 订单状态（如 "pending", "paid"）

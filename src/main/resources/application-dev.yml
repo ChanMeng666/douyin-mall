@@ -15,9 +15,21 @@ thread:
 spring:
   datasource:
     username: root
-    password: 13949271904
+    password: your_password
     url: jdbc:mysql://127.0.0.1:3306/douyin_mall?useUnicode=true&characterEncoding=utf8&autoReconnect=true&zeroDateTimeBehavior=convertToNull&serverTimezone=UTC&useSSL=true
     driver-class-name: com.mysql.cj.jdbc.Driver
+
+  # 添加JPA配置
+  jpa:
+    database-platform: org.hibernate.dialect.MySQL8Dialect
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL8Dialect
+        format_sql: true
+
   hikari:
     pool-name: Retail_HikariCP
     minimum-idle: 15 #最小空闲连接数量
@@ -38,8 +50,8 @@ mybatis:
 redis:
   sdk:
     config:
-      host:
-      port:
+      host: 127.0.0.1
+      port: 6379
       pool-size: 10
       min-idle-size: 5
       idle-timeout: 30000

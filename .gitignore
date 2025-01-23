@@ -63,3 +63,5 @@ build/
 ### Mac OS ###
 .DS_Store
 /.idea/uiDesigner.xml
+/.idea
+src/main/resources/application-dev.yml

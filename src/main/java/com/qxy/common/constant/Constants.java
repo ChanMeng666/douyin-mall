@@ -10,13 +10,29 @@ public class Constants {
     public final static String SPACE = " ";
     public final static String UNDERLINE = "_";
 
+//    /**
+//     * 定义出缓存key的前缀标识，
+//     */
+//    public static class RedisKey {
+//
+//
+//    }
+
     /**
-     * 定义出缓存key的前缀标识，
+     * Redis Key前缀
      */
     public static class RedisKey {
+        public static final String TEST_PREFIX = "test:";
+        public static final String USER_PREFIX = "user:";
+        public static final String PRODUCT_PREFIX = "product:";
+        public static final String ORDER_PREFIX = "order:";
 
-
+        // 生成带前缀的key
+        public static String getKey(String prefix, String key) {
+            return prefix + key;
+        }
     }
+
     @Getter
     @AllArgsConstructor
     public enum OrderStatus {

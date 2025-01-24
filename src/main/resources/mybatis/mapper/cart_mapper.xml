@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qxy.repository.CartRepository">
+    <resultMap id="BaseResultMap" type="com.qxy.model.po.Cart">
+        <id column="cart_id" property="cartId" />
+        <result column="user_id" property="userId" />
+        <result column="created_at" property="createdAt" />
+        <result column="updated_at" property="updatedAt" />
+        <collection property="cartItems" ofType="com.qxy.model.po.CartItem">
+            <id column="cart_item_id" property="cartItemId" />
+            <result column="cart_id" property="cartId" />
+            <result column="product_id" property="productId" />
+            <result column="quantity" property="quantity" />
+            <result column="price" property="price" />
+            <result column="create_at" property="createAt" />
+            <result column="update_at" property="updateAt" />
+        </collection>
+    </resultMap>
+
+    <insert id="createCart" parameterType="com.qxy.model.po.Cart">
+        INSERT INTO carts (user_id, created_at, updated_at)
+        VALUES (#{userId}, NOW(), NOW())
+    </insert>
+
+    <select id="getCartByUserId" resultMap="BaseResultMap">
+        SELECT c.*, ci.*
+        FROM carts c
+                 LEFT JOIN cart_items ci ON c.cart_id = ci.cart_id
+        WHERE c.user_id = #{userId}
+    </select>
+
+    <update id="updateCart" parameterType="com.qxy.model.po.Cart">
+        UPDATE carts
+        SET updated_at = NOW()
+        WHERE cart_id = #{cartId}
+    </update>
+
+    <delete id="deleteCart">
+        DELETE FROM carts WHERE cart_id = #{cartId}
+    </delete>
+</mapper>

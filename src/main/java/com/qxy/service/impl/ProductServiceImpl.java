@@ -6,6 +6,7 @@ import com.qxy.dao.dataobject.ProductDO;
 import com.qxy.dao.mapper.ProductMapper;
 import com.qxy.service.PictureService;
 import com.qxy.service.ProductService;
+import com.qxy.service.dto.ProductDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -30,5 +31,22 @@ public class ProductServiceImpl implements ProductService {
         productDO.setImageUrl(fileName);
         productMapper.insert(productDO);
         return productDO.getId();
+    }
+
+    @Override
+    public ProductDTO getProductById(Integer productId) {
+        ProductDO productDO = productMapper.selectById(productId);
+        if (productDO == null) {
+            return null;
+        }
+
+        ProductDTO productDTO = new ProductDTO();
+        productDTO.setProductId(productDO.getId());
+        productDTO.setName(productDO.getName());
+        productDTO.setDescription(productDO.getDescription());
+        productDTO.setPrice(productDO.getPrice());
+        productDTO.setStock(productDO.getStock());
+        productDTO.setImageUrl(productDO.getImageUrl());
+        return productDTO;
     }
 }

@@ -1,5 +1,6 @@
 package com.qxy.service;
 
+import com.qxy.model.po.Order;
 import com.qxy.model.req.CreateOrderReq;
 import com.qxy.model.res.OrderRes;
 
@@ -13,4 +14,6 @@ import com.qxy.model.res.OrderRes;
 public interface IOrderService {
 
     OrderRes createOrder(CreateOrderReq createOrderReq);
+
+    Order getOrderList(Integer userId);
 }

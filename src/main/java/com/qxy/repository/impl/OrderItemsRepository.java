@@ -4,6 +4,7 @@ import com.qxy.dao.OrderItemsDao;
 import com.qxy.model.po.CartItem;
 import com.qxy.model.po.OrderItems;
 import com.qxy.repository.IOrderItemsRepository;
+import org.springframework.stereotype.Repository;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
@@ -15,6 +16,7 @@ import java.util.List;
  * @Date: 2025/1/20 23:07
  * @Version: 1.0
  */
+@Repository
 public class OrderItemsRepository implements IOrderItemsRepository {
     @Resource
     private OrderItemsDao orderItemsDao;

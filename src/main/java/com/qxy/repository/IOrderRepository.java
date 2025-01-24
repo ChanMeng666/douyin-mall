@@ -10,4 +10,11 @@ import com.qxy.model.po.Order;
  */
 public interface IOrderRepository {
     void createOrder(Order order);
+
+    /**
+     * 根据用户ID获取订单列表
+     * @param userId
+     * @return
+     */
+    Order getOrderList(Integer userId);
 }

@@ -8,6 +8,7 @@ import com.qxy.model.res.OrderRes;
 import com.qxy.repository.IOrderItemsRepository;
 import com.qxy.repository.IOrderRepository;
 import com.qxy.service.IOrderService;
+import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
@@ -20,6 +21,7 @@ import java.util.List;
  * @Date: 2025/1/18 22:14
  * @Version: 1.0
  */
+@Service
 public class OrderServiceImpl implements IOrderService {
 
     @Resource
@@ -78,5 +80,10 @@ public class OrderServiceImpl implements IOrderService {
                 .totalAmount(order.getTotalAmount())
                 .actualAmount(order.getTotalAmount())
                 .build();
+    }
+
+    @Override
+    public Order getOrderList(Integer userId) {
+        return orderRepository.getOrderList(userId);
     }
 }

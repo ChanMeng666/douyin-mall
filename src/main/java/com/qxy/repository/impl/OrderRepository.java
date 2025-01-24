@@ -21,4 +21,9 @@ public class OrderRepository implements IOrderRepository {
     public void createOrder(Order order) {
         orderDao.createOrder(order);
     }
+
+    @Override
+    public Order getOrderList(Integer userId) {
+        return orderDao.getOrderList(userId);
+    }
 }

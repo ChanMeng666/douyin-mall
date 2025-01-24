@@ -12,5 +12,7 @@ import org.apache.ibatis.annotations.Mapper;
 
 @Mapper
 public interface OrderDao {
+   Order getOrderList(Integer userId);
+
    void createOrder(Order order);
 }

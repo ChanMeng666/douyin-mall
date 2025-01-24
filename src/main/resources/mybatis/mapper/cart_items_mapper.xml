@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qxy.repository.CartItemRepository">
+    <resultMap id="BaseResultMap" type="com.qxy.model.po.CartItem">
+        <id column="cart_item_id" property="cartItemId" />
+        <result column="cart_id" property="cartId" />
+        <result column="product_id" property="productId" />
+        <result column="quantity" property="quantity" />
+        <result column="total_price" property="totalPrice" />
+        <result column="created_at" property="createAt" />
+        <result column="updated_at" property="updateAt" />
+    </resultMap>
+
+    <insert id="insertItem" parameterType="com.qxy.model.po.CartItem">
+        INSERT INTO cart_items (
+            cart_id,
+            product_id,
+            quantity,
+            total_price,
+            created_at,
+            updated_at
+        )
+        VALUES (
+                   #{cartId},
+                   #{productId},
+                   #{quantity},
+                   #{totalPrice},
+                   NOW(),
+                   NOW()
+               )
+    </insert>
+
+    <delete id="deleteItem">
+        DELETE FROM cart_items
+        WHERE cart_item_id = #{cartItemId}
+    </delete>
+
+    <update id="updateItem" parameterType="com.qxy.model.po.CartItem">
+        UPDATE cart_items
+        SET quantity = #{quantity},
+            total_price = #{totalPrice},
+            updated_at = NOW()
+        WHERE cart_item_id = #{cartItemId}
+    </update>
+
+    <select id="getItemsByCartId" resultMap="BaseResultMap">
+        SELECT * FROM cart_items
+        WHERE cart_id = #{cartId}
+    </select>
+
+    <select id="getItemByProductId" resultMap="BaseResultMap">
+        SELECT * FROM cart_items
+        WHERE cart_id = #{cartId}
+          AND product_id = #{productId}
+    </select>
+
+    <update id="updateTotalPrice">
+        UPDATE cart_items
+        SET total_price = #{totalPrice},
+            updated_at = NOW()
+        WHERE cart_item_id = #{cartItemId}
+    </update>
+</mapper>

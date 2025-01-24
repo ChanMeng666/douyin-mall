@@ -22,7 +22,8 @@ public class CartItem {
     /** 商品数量 */
     private Integer quantity;
     /** 商品价格 */
-    private BigDecimal price;
+//    private BigDecimal price;
+    private BigDecimal totalPrice; // Changed to match database schema type
     /** 创建时间 */
     private Date createAt;
     /** 更新时间 */

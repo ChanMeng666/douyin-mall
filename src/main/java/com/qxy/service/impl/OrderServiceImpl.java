@@ -47,7 +47,7 @@ public class OrderServiceImpl implements IOrderService {
         // 计算订单总金额
         BigDecimal totalAmount = BigDecimal.ZERO;
         for (CartItem cartItem : cartItems) {
-            totalAmount = totalAmount.add(cartItem.getPrice().multiply(new BigDecimal(cartItem.getQuantity())));
+            totalAmount = totalAmount.add(cartItem.getTotalPrice().multiply(new BigDecimal(cartItem.getQuantity())));
         }
         order.setTotalAmount(totalAmount);
 

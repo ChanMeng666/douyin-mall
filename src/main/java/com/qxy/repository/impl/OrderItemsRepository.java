@@ -26,7 +26,7 @@ public class OrderItemsRepository implements IOrderItemsRepository {
             orderItem.setOrderId(orderId);
             orderItem.setProductId(cartItem.getProductId());
             orderItem.setQuantity(cartItem.getQuantity());
-            orderItem.setPrice(cartItem.getPrice());
+            orderItem.setPrice(cartItem.getTotalPrice());
             orderItemsList.add(orderItem);
         }
         for(OrderItems orderItem : orderItemsList) {

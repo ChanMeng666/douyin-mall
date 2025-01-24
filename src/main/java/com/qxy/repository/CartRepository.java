@@ -7,6 +7,5 @@ import org.apache.ibatis.annotations.Mapper;
 public interface CartRepository {
     void createCart(Cart cart);
     Cart getCartByUserId(Integer userId);
-    void updateCart(Cart cart);
     void deleteCart(Integer cartId);
 }

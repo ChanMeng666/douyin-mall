@@ -24,39 +24,39 @@ public class CartController {
                 .build();
     }
 
-    @GetMapping("/get")
-    public Response<Cart> getCart(@RequestParam Integer userId) {
+    @DeleteMapping("/items/{cartItemId}")
+    public Response<Void> removeCartItem(@PathVariable Integer cartItemId) {
+        cartService.removeItem(cartItemId);
+        return Response.<Void>builder()
+                .code(ResponseCode.SUCCESS.getCode())
+                .info(ResponseCode.SUCCESS.getInfo())
+                .build();
+    }
+
+    @GetMapping("/user/{userId}")
+    public Response<Cart> getCart(@PathVariable Integer userId) {
+        Cart cart = cartService.getCart(userId);
         return Response.<Cart>builder()
                 .code(ResponseCode.SUCCESS.getCode())
                 .info(ResponseCode.SUCCESS.getInfo())
-                .data(cartService.getCart(userId))
+                .data(cart)
                 .build();
     }
 
-    @PostMapping("/update")
-    public Response<Void> updateCartItem(@RequestParam Integer userId,
-                                         @RequestParam Integer productId,
-                                         @RequestParam Integer quantity) {
-        cartService.updateItemQuantity(userId, productId, quantity);
+    @PutMapping("/items/{cartItemId}")
+    public Response<Void> updateCartItemQuantity(
+            @PathVariable Integer cartItemId,
+            @RequestParam Integer quantity) {
+        cartService.updateItemQuantity(cartItemId, quantity);
         return Response.<Void>builder()
                 .code(ResponseCode.SUCCESS.getCode())
                 .info(ResponseCode.SUCCESS.getInfo())
                 .build();
     }
 
-    @DeleteMapping("/remove")
-    public Response<Void> removeFromCart(@RequestParam Integer userId,
-                                         @RequestParam Integer productId) {
-        cartService.removeItem(userId, productId);
-        return Response.<Void>builder()
-                .code(ResponseCode.SUCCESS.getCode())
-                .info(ResponseCode.SUCCESS.getInfo())
-                .build();
-    }
-
-    @DeleteMapping("/clear")
-    public Response<Void> clearCart(@RequestParam Integer userId) {
-        cartService.clearCart(userId);
+    @DeleteMapping("/{cartId}")
+    public Response<Void> deleteCart(@PathVariable Integer cartId) {
+        cartService.deleteCart(cartId);
         return Response.<Void>builder()
                 .code(ResponseCode.SUCCESS.getCode())
                 .info(ResponseCode.SUCCESS.getInfo())

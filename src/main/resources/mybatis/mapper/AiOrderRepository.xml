@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--
+  Author: water
+  Description: MyBatis 订单数据访问映射文件，定义与 orders 表交互的 SQL 语句
+  Date: 2025/1/24 21:26
+  Version: 1.0
+-->
+
+<mapper namespace="com.qxy.repository.AiOrderRepository">
+    <!-- 根据 userId 查询订单 -->
+    <select id="findByUserId" resultType="com.qxy.model.po.AiOrder">
+        SELECT * FROM orders WHERE user_id = #{userId}
+    </select>
+
+    <!-- 根据 orderId 查询订单 -->
+    <select id="findByOrderId" resultType="com.qxy.model.po.AiOrder">
+        SELECT * FROM orders WHERE order_id = #{orderId}
+    </select>
+</mapper>

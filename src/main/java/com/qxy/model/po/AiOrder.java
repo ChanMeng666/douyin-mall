@@ -1,36 +1,26 @@
 package com.qxy.model.po;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import lombok.Data;
+
+import java.math.BigDecimal;
+import java.sql.Timestamp;
 
 /**
- * @Author: water
- * @Description: 订单实体类，映射数据库中的 "order" 表
- * @Date: 2025/1/22 16:44
- * @Version: 1.0
+ * Author: water
+ * Description: 订单实体类，用于映射数据库中的 orders 表
+ * Date: 2025/1/24 21:26
+ * Version: 1.0
  */
-@Entity
-@Table(name = "order")
+
+@Data
 public class AiOrder {
-    @Id
-    private String orderId;
+    private Integer orderId;
+    private Integer userId;
+    private BigDecimal totalAmount;
     private String status;
+    private Integer payType;
+    private Timestamp payTime;
+    private Timestamp createdAt;
+    private Timestamp updatedAt;
 
-    // Getters and Setters
-    public String getOrderId() {
-        return orderId;
-    }
-
-    public void setOrderId(String orderId) {
-        this.orderId = orderId;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
 }

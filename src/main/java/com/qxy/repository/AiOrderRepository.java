@@ -1,15 +1,20 @@
 package com.qxy.repository;
 
 import com.qxy.model.po.AiOrder;
+import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
-import org.springframework.data.jpa.repository.JpaRepository;
+import java.util.List;
 
 /**
- * @Author: water
- * @Description: 订单数据访问接口
- * @Date: 2025/1/22 16:44
- * @Version: 1.0
+ * Author: water
+ * Description: 订单数据访问接口，定义与 orders 表交互的方法
+ * Date: 2025/1/24 21:26
+ * Version: 1.0
  */
-public interface AiOrderRepository extends JpaRepository<AiOrder, String> {
-    AiOrder findByOrderId(String orderId);
+
+@Mapper
+public interface AiOrderRepository {
+    List<AiOrder> findByUserId(@Param("userId") Integer userId);
+    AiOrder findByOrderId(@Param("orderId") Integer orderId);
 }

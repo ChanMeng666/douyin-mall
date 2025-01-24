@@ -1,13 +1,16 @@
 package com.qxy.service;
 
-import com.qxy.model.res.AiOrderResponse;
+import com.qxy.model.po.AiOrder;
+
+import java.util.List;
 
 /**
- * @Author: water
- * @Description: AI 订单服务接口，提供订单查询功能
- * @Date: 2025/1/22 16:44
- * @Version: 1.0
+ * Author: water
+ * Description: 订单服务接口，定义订单相关的业务逻辑方法
+ * Date: 2025/1/24 21:26
+ * Version: 1.0
  */
 public interface AiOrderService {
-    AiOrderResponse getAiOrderById(String orderId);
+    List<AiOrder> getOrdersByUserId(Integer userId);
+    AiOrder getOrderByOrderId(Integer orderId);
 }

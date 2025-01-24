@@ -18,6 +18,13 @@ spring:
     password: 123456
     url: jdbc:mysql://116.62.149.227:13306/douyin_mall?useUnicode=true&characterEncoding=utf8&autoReconnect=true&zeroDateTimeBehavior=convertToNull&serverTimezone=UTC&useSSL=true
     driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      connection-timeout: 60000 # 1 minute
+      idle-timeout: 600000 # 10 minutes
+      max-lifetime: 1800000 # 30 minutes
+      maximum-pool-size: 10
+      minimum-idle: 5
+      connection-test-query: SELECT 1
 
   # 添加JPA配置
   jpa:

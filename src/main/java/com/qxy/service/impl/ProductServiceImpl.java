@@ -10,6 +10,8 @@ import com.qxy.service.dto.ProductDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class ProductServiceImpl implements ProductService {
@@ -39,14 +41,25 @@ public class ProductServiceImpl implements ProductService {
         if (productDO == null) {
             return null;
         }
+        return convertToDTO(productDO);
+    }
 
-        ProductDTO productDTO = new ProductDTO();
-        productDTO.setProductId(productDO.getId());
-        productDTO.setName(productDO.getName());
-        productDTO.setDescription(productDO.getDescription());
-        productDTO.setPrice(productDO.getPrice());
-        productDTO.setStock(productDO.getStock());
-        productDTO.setImageUrl(productDO.getImageUrl());
-        return productDTO;
+    @Override
+    public List<ProductDTO> listProducts() {
+        List<ProductDO> productDOs = productMapper.selectAll();
+        return productDOs.stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+    }
+
+    private ProductDTO convertToDTO(ProductDO productDO) {
+        ProductDTO dto = new ProductDTO();
+        dto.setProductId(productDO.getId());
+        dto.setName(productDO.getName());
+        dto.setDescription(productDO.getDescription());
+        dto.setPrice(productDO.getPrice());
+        dto.setStock(productDO.getStock());
+        dto.setImageUrl(productDO.getImageUrl());
+        return dto;
     }
 }

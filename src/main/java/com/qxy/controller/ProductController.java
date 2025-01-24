@@ -11,6 +11,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+import com.qxy.service.dto.ProductDTO;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api")
@@ -33,5 +37,15 @@ public class ProductController {
         return Response.<Long>builder().code(ResponseCode.SUCCESS.getCode())
                 .info(ResponseCode.SUCCESS.getInfo())
                 .data(productService.createProduct(param,multipartFile)).build();
+    }
+
+    @GetMapping("/product/list")
+    public Response<List<ProductDTO>> listProducts() {
+        List<ProductDTO> products = productService.listProducts();
+        return Response.<List<ProductDTO>>builder()
+                .code(ResponseCode.SUCCESS.getCode())
+                .info(ResponseCode.SUCCESS.getInfo())
+                .data(products)
+                .build();
     }
 }

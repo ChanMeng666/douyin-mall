@@ -16,7 +16,8 @@ import java.util.List;
  */
 
 @Repository
-public class AIOrderRepository implements AiOrderRepository {
+public class AIOrderRepositoryImpl implements AiOrderRepository {
+
 
     @Autowired
     private SqlSession sqlSession;

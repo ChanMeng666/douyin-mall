@@ -4,8 +4,8 @@ import com.qxy.common.exception.AppException;
 import com.qxy.common.response.ResponseCode;
 import com.qxy.model.po.Cart;
 import com.qxy.model.po.CartItem;
-import com.qxy.repository.CartItemRepository;
-import com.qxy.repository.CartRepository;
+import com.qxy.dao.CartItemDao;
+import com.qxy.dao.CartDao;
 import com.qxy.service.CartService;
 import com.qxy.service.ProductService;
 import com.qxy.service.dto.ProductDTO;
@@ -19,10 +19,10 @@ import java.math.BigDecimal;
 public class CartServiceImpl implements CartService {
 
     @Autowired
-    private CartRepository cartRepository;
+    private CartDao cartRepository;
 
     @Autowired
-    private CartItemRepository cartItemRepository;
+    private CartItemDao cartItemRepository;
 
     @Autowired
     private ProductService productService;

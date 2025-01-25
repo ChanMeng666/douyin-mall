@@ -9,7 +9,6 @@ import java.util.List;
 
 @Mapper
 public interface ProductMapper {
-
     @Insert("insert into products (name,description,price,stock) " +
             " values (#{name},#{description},#{price},#{stock})")
     @Options(useGeneratedKeys = true,keyProperty = "id",keyColumn = "product_id")

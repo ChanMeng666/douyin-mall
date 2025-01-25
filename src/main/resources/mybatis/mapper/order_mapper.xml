@@ -15,7 +15,16 @@
         insert into orders(user_id,status,total_amount,pay_type,create_time,update_time)
         values(#{userId},#{status},#{totalAmount},#{payType},now(),now())
     </insert>
+    <update id="updateOrderStatusToCancelled">
+        update orders set status = 'cancelled' where order_id = #{orderId}
+    </update>
     <select id="getOrderList" resultType="com.qxy.model.po.Order" resultMap="dataMap">
         select * from orders where user_id = #{userId}
+    </select>
+    <select id="getOvertimeOrders" resultType="java.lang.Integer" resultMap="dataMap">
+        select order_id from orders
+        where status = 'create' and now() >= create_time + INTERVAL 30 MINUTE
+        ORDER BY id ASC
+        LIMIT 50
     </select>
 </mapper>

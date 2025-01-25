@@ -1,12 +1,14 @@
 package com.qxy.service.impl;
 
 import com.qxy.common.constant.Constants;
+import com.qxy.dao.CartItemDao;
+import com.qxy.dao.OrderDao;
+import com.qxy.dao.OrderItemsDao;
 import com.qxy.model.po.CartItem;
 import com.qxy.model.po.Order;
+import com.qxy.model.po.OrderItems;
 import com.qxy.model.req.CreateOrderReq;
 import com.qxy.model.res.OrderRes;
-import com.qxy.repository.IOrderItemsRepository;
-import com.qxy.repository.IOrderRepository;
 import com.qxy.service.IOrderService;
 import org.springframework.stereotype.Service;
 
@@ -25,10 +27,13 @@ import java.util.List;
 public class OrderServiceImpl implements IOrderService {
 
     @Resource
-    private IOrderRepository orderRepository;
+    private OrderDao orderDao;
 
     @Resource
-    private IOrderItemsRepository orderItemsRepository;
+    private OrderItemsDao orderItemsDao;
+
+    @Resource
+    private CartItemDao cartItemDao;
 
     /**
      * 创建订单
@@ -41,10 +46,6 @@ public class OrderServiceImpl implements IOrderService {
         Order order = new Order();
         // 获取购物车商品信息
         List<CartItem> cartItems = createOrderReq.getCartItems();
-        /*Map<Integer, Integer> productIdAndQuantityMap = cartItems.stream().collect(HashMap::new, (m, v) -> m.put(v.getProductId(), v.getQuantity()), HashMap::putAll);
-        Set<Integer> productIds = productIdAndQuantityMap.keySet();
-         //获取商品信息
-        //抛出商品异常*/
 
         // 计算订单总金额
         BigDecimal totalAmount = BigDecimal.ZERO;
@@ -63,17 +64,20 @@ public class OrderServiceImpl implements IOrderService {
         order.setUserId(createOrderReq.getUserId());
 
         //保存订单
-        orderRepository.createOrder(order);
+        orderDao.createOrder(order);
 
         //保存订单商品项
-        orderItemsRepository.insertOrderItems(order.getOrderId(), cartItems);
+        insertOrderItems(order.getOrderId(), cartItems);
 
         //清除购物车商品
-
+        for(CartItem cartItem : cartItems) {
+            cartItemDao.deleteItem(cartItem.getCartItemId());
+        }
         //减少对应商品库存
+        subtractProductStock(cartItems);
+
 
         //返回订单响应
-
         return OrderRes.builder()
                 .status(Constants.OrderStatus.CREATE.getCode())
                 .orderId(order.getOrderId())
@@ -82,8 +86,33 @@ public class OrderServiceImpl implements IOrderService {
                 .build();
     }
 
+    private void subtractProductStock(List<CartItem> cartItems) {
+    }
+
     @Override
     public Order getOrderList(Integer userId) {
-        return orderRepository.getOrderList(userId);
+        return orderDao.getOrderList(userId);
+    }
+
+    @Override
+    public List<Integer> getOvertimeOrders() {
+        return orderDao.getOvertimeOrders();
+    }
+
+    @Override
+    public void updateOrderStatusToCancelled(int orderId) {
+        orderDao.updateOrderStatusToCancelled(orderId);
+    }
+
+
+    private void insertOrderItems(Integer orderId, List<CartItem> cartItems) {
+        for(CartItem cartItem : cartItems) {
+            OrderItems orderItems = new OrderItems();
+            orderItems.setOrderId(orderId);
+            orderItems.setProductId(cartItem.getProductId());
+            orderItems.setQuantity(cartItem.getQuantity());
+            orderItems.setPrice(cartItem.getTotalPrice());
+            orderItemsDao.insertOrderItems(orderItems);
+        }
     }
 }

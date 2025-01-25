@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.qxy.repository.CartItemRepository">
+<mapper namespace="com.qxy.dao.CartItemDao">
     <resultMap id="BaseResultMap" type="com.qxy.model.po.CartItem">
         <id column="cart_item_id" property="cartItemId" />
         <result column="cart_id" property="cartId" />

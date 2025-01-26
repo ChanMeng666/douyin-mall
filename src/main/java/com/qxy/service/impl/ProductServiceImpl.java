@@ -1,16 +1,20 @@
 package com.qxy.service.impl;
 
 
+import com.qxy.common.constant.Constants;
 import com.qxy.controller.param.CreateProductParam;
 import com.qxy.dao.dataobject.ProductDO;
 import com.qxy.dao.mapper.ProductMapper;
+import com.qxy.infrastructure.redis.RedissonService;
 import com.qxy.service.PictureService;
 import com.qxy.service.ProductService;
 import com.qxy.service.dto.ProductDTO;
+import org.redisson.api.RAtomicLong;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -23,6 +27,8 @@ public class ProductServiceImpl implements ProductService {
     ProductMapper productMapper;
     @Autowired
     PictureService pictureService;
+    @Resource
+    private RedissonService redissonService;
 
     @Override
     public Integer createProduct(CreateProductParam param, MultipartFile multipartFile) {
@@ -63,6 +69,20 @@ public class ProductServiceImpl implements ProductService {
                 .collect(Collectors.toList());
     }
 
+    @Override
+    public void storeProductStock(Integer productId) {
+        //先查询缓存
+        String cacheKey = Constants.RedisKey.PRODUCT_COUNT_KEY + Constants.UNDERLINE + productId;
+        Long stockLong =redissonService.getAtomicLong(cacheKey);
+        if (stockLong != null) {
+            return ;
+        }
+        //查询数据库
+        ProductDO productDO = productMapper.selectById(productId);
+        redissonService.setAtomicLong(cacheKey, productDO.getStock());
+
+    }
+
     private ProductDTO convertToDTO(ProductDO productDO) {
         ProductDTO dto = new ProductDTO();
         dto.setProductId(productDO.getId());
@@ -73,4 +93,7 @@ public class ProductServiceImpl implements ProductService {
         dto.setImageUrl(productDO.getImageUrl());
         return dto;
     }
+
+
+
 }

@@ -1,7 +1,7 @@
 package com.qxy.service.impl;
 
+import com.qxy.dao.AiOrderDao;
 import com.qxy.model.po.AiOrder;
-import com.qxy.repository.AiOrderRepository;
 import com.qxy.service.AiOrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,15 +17,15 @@ import java.util.List;
 @Service
 public class AIOrderServiceImpl implements AiOrderService {
     @Autowired
-    private AiOrderRepository orderRepository;
+    private AiOrderDao aiOrderDao;
 
     @Override
     public List<AiOrder> getOrdersByUserId(Integer userId) {
-        return orderRepository.findByUserId(userId);
+        return aiOrderDao.findByUserId(userId);
     }
 
     @Override
     public AiOrder getOrderByOrderId(Integer orderId) {
-        return orderRepository.findByOrderId(orderId);
+        return aiOrderDao.findByOrderId(orderId);
     }
 }

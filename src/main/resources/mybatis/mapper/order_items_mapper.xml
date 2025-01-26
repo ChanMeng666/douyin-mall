@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.qxy.model.dao.OrderItemsDao">
+<mapper namespace="com.qxy.dao.OrderItemsDao">
     <resultMap id="dataMap" type="com.qxy.model.po.OrderItems">
         <id column="order_item_id" property="orderItemId"/>
         <result column="order_id" property="orderId"/>

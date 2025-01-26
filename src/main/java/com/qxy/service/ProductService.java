@@ -33,4 +33,11 @@ public interface ProductService {
      * @return
      */
     List<ProductDTO> batchSelect(List<Integer> productId);
+
+    /**
+     * 根据id存储商品库存缓存
+     * @param productId
+     * @return
+     */
+    void storeProductStock(Integer productId);
 }

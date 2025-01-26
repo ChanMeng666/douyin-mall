@@ -4,12 +4,15 @@ import com.qxy.common.constant.Constants;
 import com.qxy.dao.CartItemDao;
 import com.qxy.dao.OrderDao;
 import com.qxy.dao.OrderItemsDao;
+import com.qxy.infrastructure.redis.RedissonService;
 import com.qxy.model.po.CartItem;
 import com.qxy.model.po.Order;
 import com.qxy.model.po.OrderItems;
 import com.qxy.model.req.CreateOrderReq;
 import com.qxy.model.res.OrderRes;
 import com.qxy.service.IOrderService;
+import com.qxy.service.ProductService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -24,6 +27,7 @@ import java.util.List;
  * @Version: 1.0
  */
 @Service
+@Slf4j
 public class OrderServiceImpl implements IOrderService {
 
     @Resource
@@ -35,6 +39,11 @@ public class OrderServiceImpl implements IOrderService {
     @Resource
     private CartItemDao cartItemDao;
 
+    @Resource
+    private ProductServiceImpl productService;
+
+    @Resource
+    private RedissonService redissonService;
     /**
      * 创建订单
      *
@@ -74,8 +83,11 @@ public class OrderServiceImpl implements IOrderService {
             cartItemDao.deleteItem(cartItem.getCartItemId());
         }
         //减少对应商品库存
-        subtractProductStock(cartItems);
-
+        boolean stockStatus = subtractProductStock(cartItems);
+        //库存不足
+        if (!stockStatus) {
+            return null;
+        }
 
         //返回订单响应
         return OrderRes.builder()
@@ -86,7 +98,23 @@ public class OrderServiceImpl implements IOrderService {
                 .build();
     }
 
-    private void subtractProductStock(List<CartItem> cartItems) {
+    private boolean subtractProductStock(List<CartItem> cartItems) {
+        for(CartItem cartItem : cartItems) {
+            productService.storeProductStock(cartItem.getProductId());
+            String cacheKey = Constants.RedisKey.PRODUCT_COUNT_KEY + Constants.UNDERLINE + cartItem.getProductId();
+            long surplus = redissonService.decr(cacheKey);
+            if (surplus < 0) {
+                redissonService.setAtomicLong(cacheKey, 0);
+                return false;
+            }
+            String lockKey = cacheKey + Constants.UNDERLINE + surplus;
+            Boolean lock = redissonService.setNx(lockKey);
+            if(!lock) {
+                log.info("商品库存加锁失败 productId:{}", cartItem.getProductId());
+                return false;
+            }
+        }
+        return true;
     }
 
     @Override

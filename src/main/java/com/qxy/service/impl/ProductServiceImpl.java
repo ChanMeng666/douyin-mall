@@ -10,6 +10,9 @@ import com.qxy.service.dto.ProductDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -22,7 +25,7 @@ public class ProductServiceImpl implements ProductService {
     PictureService pictureService;
 
     @Override
-    public Long createProduct(CreateProductParam param, MultipartFile multipartFile) {
+    public Integer createProduct(CreateProductParam param, MultipartFile multipartFile) {
         String fileName = pictureService.savePicture(multipartFile);
         //存表
         ProductDO productDO = new ProductDO();
@@ -48,6 +51,14 @@ public class ProductServiceImpl implements ProductService {
     public List<ProductDTO> listProducts() {
         List<ProductDO> productDOs = productMapper.selectAll();
         return productDOs.stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<ProductDTO> batchSelect(List<Integer> productId) {
+        List<ProductDO> productDOS = productMapper.selectByIds(productId);
+        return productDOS.stream()
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
     }

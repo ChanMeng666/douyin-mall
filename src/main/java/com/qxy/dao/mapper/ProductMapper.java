@@ -18,5 +18,8 @@ public interface ProductMapper {
     ProductDO selectById(Integer productId);
 
     @Select("select * from products")
+    @Options(useGeneratedKeys = true,keyProperty = "id",keyColumn = "product_id")
     List<ProductDO> selectAll();
+
+    List<ProductDO> selectByIds(List<Integer> productId);
 }

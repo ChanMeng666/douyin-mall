@@ -6,7 +6,31 @@ import com.qxy.service.dto.ProductDTO;
 import java.util.List;
 
 public interface ProductService {
-    Long createProduct(CreateProductParam param, MultipartFile multipartFile);
+    /**
+     * 创建商品
+     * @param param
+     * @param multipartFile
+     * @return
+     */
+    Integer createProduct(CreateProductParam param, MultipartFile multipartFile);
+
+    /**
+     * 根据id查找商品
+     * @param productId
+     * @return
+     */
     ProductDTO getProductById(Integer productId);
+
+    /**
+     * 获取商品列表
+     * @return
+     */
     List<ProductDTO> listProducts();
+
+    /**
+     * 根据id批量查找
+     * @param productId
+     * @return
+     */
+    List<ProductDTO> batchSelect(List<Integer> productId);
 }

@@ -19,4 +19,8 @@ public class Response<T>{
     private String code;
     private String info;
     private T data;
+
+    public static Response success() {
+        return new Response(ResponseCode.SUCCESS.getCode(), ResponseCode.SUCCESS.getInfo(), null);
+    }
 }

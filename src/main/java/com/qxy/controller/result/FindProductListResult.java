@@ -1,4 +1,4 @@
-package com.qxy.service.dto;
+package com.qxy.controller.result;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -6,10 +6,12 @@ import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+
+
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
-public class ProductDTO implements Serializable {
+@AllArgsConstructor
+public class FindProductListResult implements Serializable {
     //商品id
     private Integer productId;
     //商品名

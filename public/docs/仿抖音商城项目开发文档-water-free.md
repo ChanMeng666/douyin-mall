@@ -178,14 +178,16 @@
 
 - **HTTP 方法**: POST
 
-- **请求体**:
+- **请求体**: form-data
 
   ```
-  {
-    "name": "Product Name",
-    "description": "Product Description",
-    "price": 100.0
-  }
+  param(Text): {
+  "name":"测试",
+   "description":"测试",
+   "price":"100.0",
+   "stock":"100"
+   }
+  productPic(File): 上传图片文件 
   ```
 
 - **响应**:

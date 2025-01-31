@@ -13,11 +13,14 @@ import com.qxy.model.res.OrderRes;
 import com.qxy.service.IOrderService;
 import com.qxy.service.ProductService;
 import lombok.extern.slf4j.Slf4j;
+import org.redisson.api.RBlockingQueue;
+import org.redisson.api.RDelayedQueue;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 
 /**
@@ -99,9 +102,12 @@ public class OrderServiceImpl implements IOrderService {
     }
 
     private boolean subtractProductStock(List<CartItem> cartItems) {
+        //库存扣减
         for(CartItem cartItem : cartItems) {
+            //将商品库存存入缓存中
             productService.storeProductStock(cartItem.getProductId());
             String cacheKey = Constants.RedisKey.PRODUCT_COUNT_KEY + Constants.UNDERLINE + cartItem.getProductId();
+            //原子锁扣减
             long surplus = redissonService.decr(cacheKey);
             if (surplus < 0) {
                 redissonService.setAtomicLong(cacheKey, 0);
@@ -114,8 +120,19 @@ public class OrderServiceImpl implements IOrderService {
                 return false;
             }
         }
+        //将商品消耗放入延迟队列中消费
+        productStockConsumerSendQueue(cartItems);
         return true;
     }
+
+    private void productStockConsumerSendQueue(List<CartItem> cartItems){
+        String cacheKey = Constants.RedisKey.PRODUCT_COUNT_KEY;
+        RBlockingQueue<CartItem> blockingQueue = redissonService.getBlockingQueue(cacheKey);
+        RDelayedQueue<CartItem> delayedQueue = redissonService.getDelayedQueue(blockingQueue);
+        for(CartItem cartItem: cartItems) {
+            delayedQueue.offer(cartItem,5, TimeUnit.SECONDS);
+        }
+    };
 
     @Override
     public Order getOrderList(Integer userId) {
@@ -130,6 +147,14 @@ public class OrderServiceImpl implements IOrderService {
     @Override
     public void updateOrderStatusToCancelled(int orderId) {
         orderDao.updateOrderStatusToCancelled(orderId);
+    }
+
+    @Override
+    public CartItem takeQueue() {
+        String cacheKey = Constants.RedisKey.PRODUCT_QUEUE_KEY;
+        RBlockingQueue<CartItem> blockingQueue = redissonService.getBlockingQueue(cacheKey);
+        RDelayedQueue<CartItem> delayedQueue = redissonService.getDelayedQueue(blockingQueue);
+        return delayedQueue.poll();
     }
 
 

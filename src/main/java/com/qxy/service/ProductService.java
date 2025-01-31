@@ -1,6 +1,7 @@
 package com.qxy.service;
 
 import com.qxy.controller.param.CreateProductParam;
+import com.qxy.dao.dataobject.ProductDO;
 import org.springframework.web.multipart.MultipartFile;
 import com.qxy.service.dto.ProductDTO;
 import java.util.List;
@@ -40,4 +41,5 @@ public interface ProductService {
      * @return
      */
     void storeProductStock(Integer productId);
+
 }

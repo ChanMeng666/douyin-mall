@@ -27,6 +27,8 @@ public class Constants {
         public static final String PRODUCT_PREFIX = "product:";
         public static final String ORDER_PREFIX = "order:";
         public static final String PRODUCT_COUNT_KEY = "product_count_key";
+
+        public static final String PRODUCT_QUEUE_KEY = "product_queue_Key";
         // 生成带前缀的key
         public static String getKey(String prefix, String key) {
             return prefix + key;

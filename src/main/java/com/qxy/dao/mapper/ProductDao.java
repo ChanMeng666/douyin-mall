@@ -8,7 +8,7 @@ import org.apache.ibatis.annotations.Select;
 import java.util.List;
 
 @Mapper
-public interface ProductMapper {
+public interface ProductDao {
     @Insert("insert into products (name,description,price,stock) " +
             " values (#{name},#{description},#{price},#{stock})")
     @Options(useGeneratedKeys = true,keyProperty = "id",keyColumn = "product_id")
@@ -22,4 +22,6 @@ public interface ProductMapper {
     List<ProductDO> selectAll();
 
     List<ProductDO> selectByIds(List<Integer> productId);
+
+    void updateProductStock(ProductDO productDO);
 }

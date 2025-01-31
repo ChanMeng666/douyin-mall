@@ -4,19 +4,16 @@ package com.qxy.service.impl;
 import com.qxy.common.constant.Constants;
 import com.qxy.controller.param.CreateProductParam;
 import com.qxy.dao.dataobject.ProductDO;
-import com.qxy.dao.mapper.ProductMapper;
+import com.qxy.dao.mapper.ProductDao;
 import com.qxy.infrastructure.redis.RedissonService;
 import com.qxy.service.PictureService;
 import com.qxy.service.ProductService;
 import com.qxy.service.dto.ProductDTO;
-import org.redisson.api.RAtomicLong;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -24,7 +21,7 @@ import java.util.stream.Collectors;
 public class ProductServiceImpl implements ProductService {
 
     @Autowired
-    ProductMapper productMapper;
+    ProductDao productMapper;
     @Autowired
     PictureService pictureService;
     @Resource

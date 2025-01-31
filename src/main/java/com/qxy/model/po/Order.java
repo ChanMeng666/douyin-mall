@@ -24,7 +24,7 @@ public class Order {
     /** 订单支付时间*/
     private Date payTime;
     /** 订单创建时间*/
-    private Date createAt;
+    private Date createdAt;
     /** 更新时间*/
-    private Date updateAt;
+    private Date updatedAt;
 }

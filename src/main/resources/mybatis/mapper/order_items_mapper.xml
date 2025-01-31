@@ -7,11 +7,11 @@
         <result column="product_id" property="productId"/>
         <result column="quantity" property="quantity"/>
         <result column="price" property="price"/>
-        <result column="create_at" property="createAt"/>
-        <result column="update_at" property="updateAt"/>
+        <result column="create_at" property="createdAt"/>
+        <result column="update_at" property="updatedAt"/>
     </resultMap>
     <insert id="insertOrderItems">
-        insert into order_items (order_id, product_id, quantity, price, create_at, update_at)
+        insert into order_items (order_id, product_id, quantity, price, created_at, updated_at)
         values (#{orderId}, #{productId}, #{quantity}, #{price}, now(), now())
     </insert>
 

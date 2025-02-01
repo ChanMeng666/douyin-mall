@@ -9,16 +9,20 @@ import com.qxy.model.po.CartItem;
 import com.qxy.model.po.Order;
 import com.qxy.model.po.OrderItems;
 import com.qxy.model.req.CreateOrderReq;
-import com.qxy.model.res.OrderRes;
+import com.qxy.model.req.QueryHistoryOrderReq;
+import com.qxy.model.res.CreateOrderRes;
+import com.qxy.model.res.QueryHistoryOrderRes;
 import com.qxy.service.IOrderService;
-import com.qxy.service.ProductService;
 import lombok.extern.slf4j.Slf4j;
+import org.redisson.api.RAtomicLong;
 import org.redisson.api.RBlockingQueue;
 import org.redisson.api.RDelayedQueue;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -54,7 +58,8 @@ public class OrderServiceImpl implements IOrderService {
      * @return 订单响应
      */
     @Override
-    public OrderRes createOrder(CreateOrderReq createOrderReq) {
+    public CreateOrderRes createOrder(CreateOrderReq createOrderReq) {
+        log.info("创建订单请求: userId:{} , cartId:{} , payType:{}", createOrderReq.getUserId(),createOrderReq.getCartId(), createOrderReq.getPayType());
         Order order = new Order();
         // 获取购物车商品信息
         List<CartItem> cartItems = createOrderReq.getCartItems();
@@ -77,7 +82,7 @@ public class OrderServiceImpl implements IOrderService {
 
         //保存订单
         orderDao.createOrder(order);
-
+        log.info("订单创建成功: orderId:{} , totalAmount:{}", order.getOrderId(), order.getTotalAmount());
         //保存订单商品项
         insertOrderItems(order.getOrderId(), cartItems);
 
@@ -93,12 +98,22 @@ public class OrderServiceImpl implements IOrderService {
         }
 
         //返回订单响应
-        return OrderRes.builder()
+        return CreateOrderRes.builder()
                 .status(Constants.OrderStatus.CREATE.getCode())
                 .orderId(order.getOrderId())
+                .createdAt(order.getCreatedAt())
                 .totalAmount(order.getTotalAmount())
-                .actualAmount(order.getTotalAmount())
+                .payType(createOrderReq.getPayType())
                 .build();
+    }
+
+    @Override
+    public QueryHistoryOrderRes queryHistoryOrderByUserId(QueryHistoryOrderReq queryHistoryOrderReq) {
+         List<Order> orderList = orderDao.getOrderList(queryHistoryOrderReq.getUserId());
+         return QueryHistoryOrderRes.builder()
+                 .userId(queryHistoryOrderReq.getUserId())
+                 .historyOrders(orderList)
+                 .build();
     }
 
     private boolean subtractProductStock(List<CartItem> cartItems) {
@@ -134,10 +149,7 @@ public class OrderServiceImpl implements IOrderService {
         }
     };
 
-    @Override
-    public Order getOrderList(Integer userId) {
-        return orderDao.getOrderList(userId);
-    }
+
 
     @Override
     public List<Integer> getOvertimeOrders() {
@@ -167,5 +179,12 @@ public class OrderServiceImpl implements IOrderService {
             orderItems.setPrice(cartItem.getTotalPrice());
             orderItemsDao.insertOrderItems(orderItems);
         }
+    }
+
+    private Integer generateOrderNo() {
+        String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
+        Long atomicLong = redissonService.getAtomicLong("order:seq");
+        Integer sequence = atomicLong.intValue();
+        return sequence;
     }
 }

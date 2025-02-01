@@ -3,7 +3,9 @@ package com.qxy.service;
 import com.qxy.model.po.CartItem;
 import com.qxy.model.po.Order;
 import com.qxy.model.req.CreateOrderReq;
-import com.qxy.model.res.OrderRes;
+import com.qxy.model.req.QueryHistoryOrderReq;
+import com.qxy.model.res.CreateOrderRes;
+import com.qxy.model.res.QueryHistoryOrderRes;
 
 import java.util.List;
 
@@ -21,14 +23,14 @@ public interface IOrderService {
      * @param createOrderReq
      * @return
      */
-    OrderRes createOrder(CreateOrderReq createOrderReq);
+    CreateOrderRes createOrder(CreateOrderReq createOrderReq);
 
     /**
-     * 获取订单列表
-     * @param userId
+     * 根据用户id查询订单
+     * @param queryHistoryOrderReq
      * @return
      */
-    Order getOrderList(Integer userId);
+    QueryHistoryOrderRes queryHistoryOrderByUserId( QueryHistoryOrderReq queryHistoryOrderReq);
 
     /**
      * 获取超时订单
@@ -43,7 +45,7 @@ public interface IOrderService {
     void updateOrderStatusToCancelled(int orderId);
 
     /**
-     * 从延迟队列中取一个购物车
+     * 从延迟队列中取一个购物车,用于消费商品库存
      * @return
      */
     CartItem takeQueue();

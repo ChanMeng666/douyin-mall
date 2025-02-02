@@ -1,10 +1,14 @@
 package com.qxy.service;
 
+import com.qxy.model.po.CartItem;
 import com.qxy.model.po.Order;
 import com.qxy.model.req.CreateOrderReq;
-import com.qxy.model.res.OrderRes;
+import com.qxy.model.req.QueryHistoryOrderReq;
+import com.qxy.model.res.CreateOrderRes;
+import com.qxy.model.res.QueryHistoryOrderRes;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @Author: dawang
@@ -15,11 +19,41 @@ import java.util.List;
 
 public interface IOrderService {
 
-    OrderRes createOrder(CreateOrderReq createOrderReq);
+    /**
+     * 创建订单
+     * @param createOrderReq
+     * @return
+     */
+    CreateOrderRes createOrder(CreateOrderReq createOrderReq);
 
-    Order getOrderList(Integer userId);
+    /**
+     * 根据用户id查询订单
+     * @param queryHistoryOrderReq
+     * @return
+     */
+    QueryHistoryOrderRes queryHistoryOrderByUserId( QueryHistoryOrderReq queryHistoryOrderReq);
 
+    /**
+     * 获取超时订单
+     * @return
+     */
     List<Integer> getOvertimeOrders();
 
+    /**
+     * 更新订单状态为取消
+     * @param orderId
+     */
     void updateOrderStatusToCancelled(int orderId);
+
+    /**
+     * 从延迟队列中取一个购物车,用于消费商品库存
+     * @return
+     */
+    Map<Integer,Integer> takeQueue();
+
+    /**
+     * 回滚库存
+     * @param rollbackMap
+     */
+    void rollbackStock(Map<Integer, Integer> rollbackMap);
 }

@@ -15,7 +15,7 @@ public class Order {
     private Integer orderId;
     /** 用户Id*/
     private Integer userId;
-    /** 订单状态  1.create【创建】 2.pay_wait【未付款】 3.Cancelled【取消】*/
+    /** 订单状态  1.pay_wait【未付款】  2.paid【支付完成】 3.Cancelled【取消】*/
     private String status;
     /** 订单总价*/
     private BigDecimal totalAmount;
@@ -24,7 +24,7 @@ public class Order {
     /** 订单支付时间*/
     private Date payTime;
     /** 订单创建时间*/
-    private Date createTime;
+    private Date createdAt;
     /** 更新时间*/
-    private Date updateTime;
+    private Date updatedAt;
 }

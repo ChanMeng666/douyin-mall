@@ -8,11 +8,11 @@
         <result column="total_amount" property="totalAmount" />
         <result column="pay_type" property="payType" />
         <result column="pay_time" property="payTime" />
-        <result column="create_time" property="createTime" />
-        <result column="update_time" property="updateTime" />
+        <result column="created_at" property="createdAt" />
+        <result column="updated_at" property="updatedAt" />
     </resultMap>
     <insert id="createOrder">
-        insert into orders(user_id,status,total_amount,pay_type,create_time,update_time)
+        insert into orders(user_id,status,total_amount,pay_type,created_at,updated_at)
         values(#{userId},#{status},#{totalAmount},#{payType},now(),now())
     </insert>
     <update id="updateOrderStatusToCancelled">
@@ -23,7 +23,7 @@
     </select>
     <select id="getOvertimeOrders" resultType="java.lang.Integer" resultMap="dataMap">
         select order_id from orders
-        where status = 'create' and now() >= create_time + INTERVAL 30 MINUTE
+        where status = 'create' and now() >= created_at + INTERVAL 30 MINUTE
         ORDER BY id ASC
         LIMIT 50
     </select>

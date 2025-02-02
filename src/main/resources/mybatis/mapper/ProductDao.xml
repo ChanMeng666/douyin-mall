@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.qxy.dao.mapper.ProductMapper">
+<mapper namespace="com.qxy.dao.mapper.ProductDao">
     <resultMap id="ProductResultMap" type="com.qxy.dao.dataobject.ProductDO">
         <id column="product_id" property="id" />
         <result column="name" property="name" />
@@ -11,7 +11,9 @@
         <result column="update_at" property="updatedAt" />
         <result column="image_url" property="imageUrl" />
     </resultMap>
-
+    <update id="reduceProductStock">
+        update products set stock = stock - #{ quantity} where product_id = #{productId} and stock >= 0
+    </update>
 
     <select id="selectByIds" resultMap="ProductResultMap" resultType="com.qxy.dao.dataobject.ProductDO">
         select * from products

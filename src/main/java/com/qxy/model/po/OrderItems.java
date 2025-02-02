@@ -24,7 +24,7 @@ public class OrderItems {
     /** 商品单价 */
     private BigDecimal price;
     /** 创建时间 */
-    private Date createAt;
+    private Date createdAt;
     /** 更新时间 */
-    private Date updateAt;
+    private Date updatedAt;
 }

@@ -14,7 +14,7 @@ import java.util.List;
 
 @Mapper
 public interface OrderDao {
-   Order getOrderList(Integer userId);
+   List<Order> getOrderList(Integer userId);
 
    void createOrder(Order order);
 

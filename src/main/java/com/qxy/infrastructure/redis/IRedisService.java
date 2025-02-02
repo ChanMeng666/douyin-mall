@@ -267,4 +267,5 @@ public interface IRedisService {
 
     Boolean setNx(String key, long expired, TimeUnit timeUnit);
 
+    Long addAndGet(String key,long value);
 }

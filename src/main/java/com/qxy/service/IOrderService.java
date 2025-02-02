@@ -8,6 +8,7 @@ import com.qxy.model.res.CreateOrderRes;
 import com.qxy.model.res.QueryHistoryOrderRes;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @Author: dawang
@@ -48,5 +49,11 @@ public interface IOrderService {
      * 从延迟队列中取一个购物车,用于消费商品库存
      * @return
      */
-    CartItem takeQueue();
+    Map<Integer,Integer> takeQueue();
+
+    /**
+     * 回滚库存
+     * @param rollbackMap
+     */
+    void rollbackStock(Map<Integer, Integer> rollbackMap);
 }

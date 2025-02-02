@@ -1,6 +1,7 @@
 package com.qxy.service.impl;
 
 import com.qxy.common.constant.Constants;
+import com.qxy.common.exception.AppException;
 import com.qxy.dao.CartItemDao;
 import com.qxy.dao.OrderDao;
 import com.qxy.dao.OrderItemsDao;
@@ -14,17 +15,20 @@ import com.qxy.model.res.CreateOrderRes;
 import com.qxy.model.res.QueryHistoryOrderRes;
 import com.qxy.service.IOrderService;
 import lombok.extern.slf4j.Slf4j;
-import org.redisson.api.RAtomicLong;
 import org.redisson.api.RBlockingQueue;
 import org.redisson.api.RDelayedQueue;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import javax.persistence.criteria.CriteriaBuilder;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Supplier;
 
 
 /**
@@ -51,19 +55,26 @@ public class OrderServiceImpl implements IOrderService {
 
     @Resource
     private RedissonService redissonService;
-    /**
-     * 创建订单
-     *
-     * @param createOrderReq 创建订单请求
-     * @return 订单响应
-     */
+
+    // 新增库存回滚记录器
+    private static final ThreadLocal<Map<Integer, Integer>> stockRollbackHolder =
+            ThreadLocal.withInitial(HashMap::new);
+
     @Override
     public CreateOrderRes createOrder(CreateOrderReq createOrderReq) {
         log.info("创建订单请求: userId:{} , cartId:{} , payType:{}", createOrderReq.getUserId(),createOrderReq.getCartId(), createOrderReq.getPayType());
         Order order = new Order();
+
         // 获取购物车商品信息
         List<CartItem> cartItems = createOrderReq.getCartItems();
 
+        //减少对应商品库存
+        boolean stockStatus = subtractProductStock(cartItems);
+
+        //库存不足
+        if (!stockStatus) {
+            return null;
+        }
         // 计算订单总金额
         BigDecimal totalAmount = BigDecimal.ZERO;
         for (CartItem cartItem : cartItems) {
@@ -90,12 +101,8 @@ public class OrderServiceImpl implements IOrderService {
         for(CartItem cartItem : cartItems) {
             cartItemDao.deleteItem(cartItem.getCartItemId());
         }
-        //减少对应商品库存
-        boolean stockStatus = subtractProductStock(cartItems);
-        //库存不足
-        if (!stockStatus) {
-            return null;
-        }
+
+
 
         //返回订单响应
         return CreateOrderRes.builder()
@@ -117,36 +124,43 @@ public class OrderServiceImpl implements IOrderService {
     }
 
     private boolean subtractProductStock(List<CartItem> cartItems) {
-        //库存扣减
-        for(CartItem cartItem : cartItems) {
-            //将商品库存存入缓存中
-            productService.storeProductStock(cartItem.getProductId());
-            String cacheKey = Constants.RedisKey.PRODUCT_COUNT_KEY + Constants.UNDERLINE + cartItem.getProductId();
-            //原子锁扣减
-            long surplus = redissonService.decr(cacheKey);
-            if (surplus < 0) {
-                redissonService.setAtomicLong(cacheKey, 0);
-                return false;
+        // 记录库存回滚  商品id 和 购买数量
+        Map<Integer, Integer> rollbackMap = stockRollbackHolder.get();
+        try{
+            //库存扣减
+            for(CartItem cartItem : cartItems) {
+                //记录库存回滚
+                rollbackMap.put(cartItem.getProductId(), cartItem.getQuantity());
+                String cacheKey = Constants.RedisKey.PRODUCT_COUNT_KEY + Constants.UNDERLINE + cartItem.getProductId();
+                //原子锁扣减   得到扣减后的库存
+                Long surplus = redissonService.addAndGet(cacheKey, -cartItem.getQuantity());
+                if (surplus < 0) {
+                    throw new AppException(cartItem.getCartItemId()+": 库存扣减失败");
+                }
             }
-            String lockKey = cacheKey + Constants.UNDERLINE + surplus;
-            Boolean lock = redissonService.setNx(lockKey);
-            if(!lock) {
-                log.info("商品库存加锁失败 productId:{}", cartItem.getProductId());
-                return false;
-            }
+            //将商品消耗放入延迟队列中消费
+            productStockConsumerSendQueue(rollbackMap);
+            return true;
+        }catch (AppException e) {
+            log.error("库存扣减失败", e);
+            // 回滚已扣减库存
+            rollbackStock(rollbackMap);
+            return false;
         }
-        //将商品消耗放入延迟队列中消费
-        productStockConsumerSendQueue(cartItems);
-        return true;
     }
 
-    private void productStockConsumerSendQueue(List<CartItem> cartItems){
+    public void rollbackStock(Map<Integer, Integer> rollbackMap){
+        rollbackMap.forEach((productId, quantity) -> {
+            String cacheKey = Constants.RedisKey.PRODUCT_COUNT_KEY + Constants.UNDERLINE + productId;
+            redissonService.addAndGet(cacheKey, quantity);
+        });
+    }
+
+    private void productStockConsumerSendQueue(Map<Integer, Integer> stockMap){
         String cacheKey = Constants.RedisKey.PRODUCT_COUNT_KEY;
-        RBlockingQueue<CartItem> blockingQueue = redissonService.getBlockingQueue(cacheKey);
-        RDelayedQueue<CartItem> delayedQueue = redissonService.getDelayedQueue(blockingQueue);
-        for(CartItem cartItem: cartItems) {
-            delayedQueue.offer(cartItem,5, TimeUnit.SECONDS);
-        }
+        RBlockingQueue<Map<Integer, Integer> > blockingQueue = redissonService.getBlockingQueue(cacheKey);
+        RDelayedQueue<Map<Integer, Integer> > delayedQueue = redissonService.getDelayedQueue(blockingQueue);
+       delayedQueue.offer(stockMap, 5, TimeUnit.MINUTES);
     };
 
 
@@ -162,10 +176,10 @@ public class OrderServiceImpl implements IOrderService {
     }
 
     @Override
-    public CartItem takeQueue() {
+    public Map<Integer, Integer> takeQueue() {
         String cacheKey = Constants.RedisKey.PRODUCT_QUEUE_KEY;
-        RBlockingQueue<CartItem> blockingQueue = redissonService.getBlockingQueue(cacheKey);
-        RDelayedQueue<CartItem> delayedQueue = redissonService.getDelayedQueue(blockingQueue);
+        RBlockingQueue<Map<Integer, Integer>> blockingQueue = redissonService.getBlockingQueue(cacheKey);
+        RDelayedQueue<Map<Integer, Integer>> delayedQueue = redissonService.getDelayedQueue(blockingQueue);
         return delayedQueue.poll();
     }
 

@@ -9,6 +9,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
+import java.util.Map;
 
 /**
  * @Author: dawang
@@ -28,15 +29,15 @@ public class UpdateProductStock {
     public void updateProductStock() {
         log.info("定时任务:开始修改商品库存");
         try{
-            CartItem cartItem = orderService.takeQueue();
-            if(null != cartItem) {
-                log.info("定时任务，减少商品数据库库存，cartItem :{}" , cartItem);
-                ProductDO productDO = new ProductDO();
-                productDO.setId(cartItem.getProductId());
-                productDao.updateProductStock(productDO);
+            Map<Integer, Integer> stockMap= orderService.takeQueue();
+            if(null == stockMap) {
+                log.info("定时任务:修改商品库存，暂无商品库存队列");
             }
+            stockMap.forEach((productId, quantity) -> {
+                productDao.reduceProductStock(productId, quantity);
+            });
         }catch (Exception e) {
-            log.error("定时任务，修改商品库存，发生异常", e);
+            log.error("定时任务:修改商品库存，发生异常", e);
         }
     }
 }

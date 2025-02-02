@@ -23,5 +23,5 @@ public interface ProductDao {
 
     List<ProductDO> selectByIds(List<Integer> productId);
 
-    void updateProductStock(ProductDO productDO);
+    void reduceProductStock(int productId, int quantity);
 }

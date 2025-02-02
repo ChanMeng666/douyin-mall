@@ -11,11 +11,9 @@
         <result column="update_at" property="updatedAt" />
         <result column="image_url" property="imageUrl" />
     </resultMap>
-    <update id="updateProductStock">
-        update products set stock = stock - 1
-        where product_id = #{productId} and stock >0
+    <update id="reduceProductStock">
+        update products set stock = stock - #{ quantity} where product_id = #{productId} and stock >= 0
     </update>
-
 
     <select id="selectByIds" resultMap="ProductResultMap" resultType="com.qxy.dao.dataobject.ProductDO">
         select * from products

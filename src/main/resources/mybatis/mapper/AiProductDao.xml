@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qxy.dao.AiProductDao">
+    <!-- 补充其他SQL（如 MyBatis 动态 SQL） -->
+    <select id="searchProductsByName" resultType="com.qxy.model.po.Product">
+        SELECT * FROM products
+        WHERE name LIKE CONCAT('%', #{keyword}, '%')
+          AND status = 'active'
+    </select>
+
+    <update id="decreaseStock">
+        UPDATE products
+        SET stock = stock - #{quantity}
+        WHERE product_id = #{productId}
+    </update>
+</mapper>

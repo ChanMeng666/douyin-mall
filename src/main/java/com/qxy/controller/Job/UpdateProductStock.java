@@ -32,12 +32,14 @@ public class UpdateProductStock {
             Map<Integer, Integer> stockMap= orderService.takeQueue();
             if(null == stockMap) {
                 log.info("定时任务:修改商品库存，暂无商品库存队列");
+                return;
             }
             stockMap.forEach((productId, quantity) -> {
                 productDao.reduceProductStock(productId, quantity);
             });
         }catch (Exception e) {
             log.error("定时任务:修改商品库存，发生异常", e);
+
         }
     }
 }

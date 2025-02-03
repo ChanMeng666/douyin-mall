@@ -38,7 +38,7 @@ public class Constants {
     @Getter
     @AllArgsConstructor
     public enum OrderStatus {
-        CREATE("CREATE","订单创建状态-如果订单"),
+        CREATE("HAVE_PAID","支付完成 - 订单已被支付"),
         PAY_WAIT("PAY_WAIT", "等待支付 - 订单创建完成后，创建支付单"),
         CANCELLED("CANCELLED","订单取消状态-订单已被用户取消或订单已超时取消")
         ;

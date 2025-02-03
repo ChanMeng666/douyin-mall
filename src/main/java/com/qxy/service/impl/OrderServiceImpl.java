@@ -20,7 +20,6 @@ import org.redisson.api.RDelayedQueue;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import javax.persistence.criteria.CriteriaBuilder;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -28,7 +27,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
-import java.util.function.Supplier;
 
 
 /**
@@ -50,8 +48,6 @@ public class OrderServiceImpl implements IOrderService {
     @Resource
     private CartItemDao cartItemDao;
 
-    @Resource
-    private ProductServiceImpl productService;
 
     @Resource
     private RedissonService redissonService;

@@ -17,6 +17,6 @@ public class User {
     private String Password;
     private String email;
     private String phone;
-    private Date createAt;
-    private Date updateAt;
+    private Date createdAt;
+    private Date updatedAt;
 }

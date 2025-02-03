@@ -12,4 +12,9 @@
     <select id="findByOrderId" resultType="com.qxy.model.po.AiOrder">
         SELECT * FROM orders WHERE order_id = #{orderId}
     </select>
+
+    <insert id="insertOrder" parameterType="com.qxy.model.po.AiOrder" useGeneratedKeys="true" keyProperty="orderId">
+        INSERT INTO orders(user_id, total_amount, status)
+        VALUES(#{userId}, #{totalAmount}, #{status})
+    </insert>
 </mapper>

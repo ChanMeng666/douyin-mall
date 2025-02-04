@@ -1,24 +1,17 @@
-package com.qxy.model.po;
+package com.qxy.controller.dto.order;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
-import java.util.Date;
 
 /**
  * @Author: dawang
- * @Description: 购物车商品表
- * @Date: 2025/1/18 22:47
+ * @Description: 购物车dto
+ * @Date: 2025/2/3 22:10
  * @Version: 1.0
  */
 @Data
-@Builder
-@AllArgsConstructor
-@NoArgsConstructor
-public class CartItem {
+public class CartItemDto {
     /** 购物车项ID */
     private Integer cartItemId;
     /** 购物车ID */
@@ -30,8 +23,4 @@ public class CartItem {
     /** 商品价格 */
 //    private BigDecimal price;
     private BigDecimal totalPrice; // Changed to match database schema type
-    /** 创建时间 */
-    private Date createAt;
-    /** 更新时间 */
-    private Date updateAt;
 }

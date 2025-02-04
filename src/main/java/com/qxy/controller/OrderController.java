@@ -1,17 +1,25 @@
 package com.qxy.controller;
 
+import com.qxy.common.exception.AppException;
 import com.qxy.common.response.Response;
 import com.qxy.common.response.ResponseCode;
+import com.qxy.controller.dto.order.CartItemDto;
 import com.qxy.controller.dto.order.CreateOrderRequestDto;
 import com.qxy.controller.dto.order.CreateOrderResponseDto;
+import com.qxy.model.po.CartItem;
 import com.qxy.model.req.CreateOrderReq;
 import com.qxy.model.res.CreateOrderRes;
 import com.qxy.service.IOrderService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.util.CollectionUtils;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @Author: dawang
@@ -32,21 +40,17 @@ public class OrderController {
      * @return
      */
     @RequestMapping("/create")
-    public Response<CreateOrderResponseDto> createOrder(CreateOrderRequestDto createOrderDto) {
+    public Response<CreateOrderResponseDto> createOrder(@RequestBody CreateOrderRequestDto createOrderDto) {
         try {
-            if(null == createOrderDto) {
-                return Response.<CreateOrderResponseDto>builder()
-                        .code(ResponseCode.ILLEGAL_PARAMETER.getCode())
-                        .info(ResponseCode.ILLEGAL_PARAMETER.getInfo())
-                        .data(null)
-                        .build();
-            }
+            //检查请求参数合法性
+            validateCreateRequest(createOrderDto);
             log.info("创建订单请求: userId:{} , cartId:{} , payType:{}", createOrderDto.getUserId(),createOrderDto.getCartId(), createOrderDto.getPayType());
-            CreateOrderReq createOrderReq = new CreateOrderReq();
-            createOrderReq.setUserId(createOrderDto.getUserId());
-            createOrderReq.setCartId(createOrderDto.getCartId());
-            createOrderReq.setPayType(createOrderDto.getPayType());
-            CreateOrderRes order = orderService.createOrder(createOrderReq);
+
+            // 转换请求对象
+            CreateOrderReq serviceReq = convertToServiceReq(createOrderDto);
+
+            // 调用服务层创建订单
+            CreateOrderRes order = orderService.createOrder(serviceReq);
             if (order == null) {
                 return Response.<CreateOrderResponseDto>builder()
                         .code(ResponseCode.UN_ERROR.getCode())
@@ -75,5 +79,28 @@ public class OrderController {
                     .build();
         }
 
+    }
+
+    private void validateCreateRequest(CreateOrderRequestDto dto) {
+        if (dto == null || CollectionUtils.isEmpty(dto.getCartItemDtos())) {
+            throw new AppException(ResponseCode.ILLEGAL_PARAMETER.getInfo());
+        }
+    }
+
+    private CreateOrderReq convertToServiceReq(CreateOrderRequestDto dto) {
+        return CreateOrderReq.builder()
+                .userId(dto.getUserId())
+                .cartId(dto.getCartId())
+                .payType(dto.getPayType())
+                .cartItems(convertCartItems(dto.getCartItemDtos()))
+                .build();
+    }
+    private List<CartItem> convertCartItems(List<CartItemDto> dtos) {
+        List<CartItem> cartItems = dtos.stream().map(dto -> CartItem.builder()
+                .productId(dto.getProductId())
+                .quantity(dto.getQuantity())
+                .totalPrice(dto.getTotalPrice())
+                .build()).collect(Collectors.toList());
+       return cartItems;
     }
 }

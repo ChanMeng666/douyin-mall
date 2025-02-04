@@ -24,7 +24,7 @@ public class CreateOrderRequestDto {
     /** 购物车ID */
     private Integer cartId;
     /** 购物车商品列表 */
-    private List<CartItem> cartItems;
+    private List<CartItemDto> cartItemDtos;
     /** 支付方式 */
     private String payType;
 }

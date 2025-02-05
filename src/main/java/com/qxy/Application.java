@@ -9,7 +9,6 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @SpringBootApplication
 @Configurable
 @EnableScheduling
-@MapperScan("com.qxy.repository")
 @MapperScan("com.qxy.dao")
 public class Application {
 

@@ -8,14 +8,19 @@
         <result column="price" property="price" />
         <result column="stock" property="stock" />
         <result column="created_at" property="createdAt" />
-        <result column="update_at" property="updatedAt" />
+        <result column="updated_at" property="updatedAt" />
         <result column="image_url" property="imageUrl" />
     </resultMap>
-    <update id="reduceProductStock">
-        update products set stock = stock - #{ quantity} where product_id = #{productId} and stock >= 0
-    </update>
 
-    <select id="selectByIds" resultMap="ProductResultMap" resultType="com.qxy.dao.dataobject.ProductDO">
+    <select id="selectAll" resultMap="ProductResultMap">
+        select * from products
+    </select>
+
+    <select id="selectById" resultMap="ProductResultMap">
+        select * from products where product_id = #{productId}
+    </select>
+
+    <select id="selectByIds" resultMap="ProductResultMap">
         select * from products
         where product_id in
         <foreach collection="productId" open="(" close=")" item="id" separator=",">
@@ -23,4 +28,8 @@
         </foreach>
     </select>
 
+    <update id="reduceProductStock">
+        update products set stock = stock - #{quantity} 
+        where product_id = #{productId} and stock >= #{quantity}
+    </update>
 </mapper>

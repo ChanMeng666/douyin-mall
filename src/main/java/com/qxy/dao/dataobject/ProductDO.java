@@ -9,7 +9,12 @@ import java.math.BigDecimal;
 @EqualsAndHashCode(callSuper = true)
 public class ProductDO extends BaseDO{
     /**
-     * 奖品名
+     * 商品ID
+     */
+    private Integer id;
+
+    /**
+     * 商品名
      */
     private String name;
 

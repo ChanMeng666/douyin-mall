@@ -1,6 +1,7 @@
 package com.qxy.dao.mapper;
 
 import com.qxy.dao.dataobject.ProductDO;
+import com.qxy.model.po.Product;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Options;
@@ -21,4 +22,6 @@ public interface ProductDao {
     List<ProductDO> selectByIds(List<Integer> productId);
 
     void reduceProductStock(int productId, int quantity);
+
+    List<Product> queryProducts();
 }

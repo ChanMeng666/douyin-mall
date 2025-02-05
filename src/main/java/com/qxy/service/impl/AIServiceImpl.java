@@ -4,6 +4,7 @@ import com.qxy.model.po.AiOrder;
 import com.qxy.service.AiOrderService;
 import com.qxy.service.QwenAIService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -17,6 +18,7 @@ import java.util.List;
 @Service
 public class AIServiceImpl {
 
+    @Qualifier("AIOrderServiceImpl")
     @Autowired
     private AiOrderService orderService;
 

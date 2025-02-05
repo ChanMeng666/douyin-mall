@@ -22,4 +22,6 @@ public class ProductDTO implements Serializable {
     private Integer stock;
     //商品图片
     private String imageUrl;
+    //商品状态
+    private String status;
 }

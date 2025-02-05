@@ -5,9 +5,11 @@ import com.qxy.common.exception.AppException;
 import com.qxy.common.response.Response;
 import com.qxy.common.response.ResponseCode;
 import com.qxy.controller.param.CreateProductParam;
+import com.qxy.controller.param.UpdateProductParam;
 import com.qxy.controller.result.FindProductListResult;
 import com.qxy.service.PictureService;
 import com.qxy.service.ProductService;
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -89,6 +91,40 @@ public class ProductController {
                 .code(ResponseCode.SUCCESS.getCode())
                 .info(ResponseCode.SUCCESS.getInfo())
                 .data(convertToFindProductListResult(products))
+                .build();
+    }
+
+    @RequestMapping("/product/update")
+    public Response<Boolean> updateProduct (@NonNull UpdateProductParam param) {
+        if (null == param.getProductId() || param.getProductId() <= 0) {
+            return Response.<Boolean>builder()
+                    .code(ResponseCode.UN_ERROR.getCode())
+                    .info(ResponseCode.UN_ERROR.getInfo())
+                    .data(Boolean.FALSE)
+                    .build();
+        }
+        productService.updateProduct(param);
+        return Response.<Boolean>builder()
+                .code(ResponseCode.SUCCESS.getCode())
+                .info(ResponseCode.SUCCESS.getInfo())
+                .data(Boolean.TRUE)
+                .build();
+    }
+
+    @RequestMapping("/product/delete")
+    public Response<Boolean> deleteProduct (@NonNull Integer productId) {
+        if(productId <= 0) {
+            return Response.<Boolean>builder()
+                    .code(ResponseCode.UN_ERROR.getCode())
+                    .info(ResponseCode.UN_ERROR.getInfo())
+                    .data(Boolean.FALSE)
+                    .build();
+        }
+        productService.deleteProduct(productId);
+        return Response.<Boolean>builder()
+                .code(ResponseCode.SUCCESS.getCode())
+                .info(ResponseCode.SUCCESS.getInfo())
+                .data(Boolean.TRUE)
                 .build();
     }
 

@@ -2,8 +2,7 @@ package com.qxy.controller.Job;
 
 import com.qxy.dao.OrderItemsDao;
 import com.qxy.dao.dataobject.ProductDO;
-import com.qxy.dao.mapper.ProductDao;
-import com.qxy.model.po.Order;
+import com.qxy.dao.ProductDao;
 import com.qxy.service.IOrderService;
 import lombok.extern.slf4j.Slf4j;
 
@@ -47,9 +46,9 @@ public class UpdateOrderStatus {
                 //根据订单号获取订单商品信息
                 List<ProductDO> productDOs = orderItemsDao.queryOrderItemByOrderId(orderId);
                 for(ProductDO productDO : productDOs) {
-                    rollbackMap.put(productDO.getId(), productDO.getStock());
+                    rollbackMap.put(productDO.getProductId(), productDO.getStock());
                     //回滚数据库库存
-                    productDao.reduceProductStock(productDO.getId(), -productDO.getStock());
+                    productDao.reduceProductStock(productDO.getProductId(), -productDO.getStock());
                 }
                 // 回滚缓存库存
                 orderService.rollbackStock(rollbackMap);

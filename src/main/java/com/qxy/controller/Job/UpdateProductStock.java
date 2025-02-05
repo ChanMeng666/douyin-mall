@@ -1,8 +1,6 @@
 package com.qxy.controller.Job;
 
-import com.qxy.dao.dataobject.ProductDO;
-import com.qxy.dao.mapper.ProductDao;
-import com.qxy.model.po.CartItem;
+import com.qxy.dao.ProductDao;
 import com.qxy.service.IOrderService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;

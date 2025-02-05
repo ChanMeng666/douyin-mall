@@ -5,9 +5,11 @@ import com.qxy.common.exception.AppException;
 import com.qxy.common.response.Response;
 import com.qxy.common.response.ResponseCode;
 import com.qxy.controller.param.CreateProductParam;
+import com.qxy.controller.param.UpdateProductParam;
 import com.qxy.controller.result.FindProductListResult;
 import com.qxy.service.PictureService;
 import com.qxy.service.ProductService;
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,7 +28,7 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/product")
 public class ProductController {
 
     @Autowired
@@ -51,7 +53,7 @@ public class ProductController {
      * @param multipartFile 文件传输
      * @return
      */
-    @RequestMapping("/product/create")
+    @RequestMapping("/create")
     public Response<Integer> createProduct (@RequestPart("param") CreateProductParam param,
                                          @RequestPart("productPic") MultipartFile multipartFile) {
         return Response.<Integer>builder().code(ResponseCode.SUCCESS.getCode())
@@ -64,7 +66,7 @@ public class ProductController {
      * @param productId 商品id
      * @return
      */
-    @RequestMapping("/product/get")
+    @RequestMapping("/get")
     public Response<List<FindProductListResult>> getProduct(@RequestParam List<Integer> productId){
         if(null == productId||productId.size() == 0) {
             log.warn("请求参数为空");
@@ -82,13 +84,47 @@ public class ProductController {
      * 展示商品列表
      * @return
      */
-    @GetMapping("/product/list")
+    @GetMapping("/list")
     public Response<List<FindProductListResult>> listProducts() {
         List<ProductDTO> products = productService.listProducts();
         return Response.<List<FindProductListResult>>builder()
                 .code(ResponseCode.SUCCESS.getCode())
                 .info(ResponseCode.SUCCESS.getInfo())
                 .data(convertToFindProductListResult(products))
+                .build();
+    }
+
+    @RequestMapping("/update")
+    public Response<Boolean> updateProduct (@NonNull UpdateProductParam param) {
+        if (null == param.getProductId() || param.getProductId() <= 0) {
+            return Response.<Boolean>builder()
+                    .code(ResponseCode.UN_ERROR.getCode())
+                    .info(ResponseCode.UN_ERROR.getInfo())
+                    .data(Boolean.FALSE)
+                    .build();
+        }
+        productService.updateProduct(param);
+        return Response.<Boolean>builder()
+                .code(ResponseCode.SUCCESS.getCode())
+                .info(ResponseCode.SUCCESS.getInfo())
+                .data(Boolean.TRUE)
+                .build();
+    }
+
+    @RequestMapping("/delete/{productId}")
+    public Response<Boolean> deleteProduct (@PathVariable Integer productId) {
+        if(productId <= 0) {
+            return Response.<Boolean>builder()
+                    .code(ResponseCode.UN_ERROR.getCode())
+                    .info(ResponseCode.UN_ERROR.getInfo())
+                    .data(Boolean.FALSE)
+                    .build();
+        }
+        productService.deleteProduct(productId);
+        return Response.<Boolean>builder()
+                .code(ResponseCode.SUCCESS.getCode())
+                .info(ResponseCode.SUCCESS.getInfo())
+                .data(Boolean.TRUE)
                 .build();
     }
 

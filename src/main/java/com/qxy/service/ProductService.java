@@ -1,7 +1,9 @@
 package com.qxy.service;
 
 import com.qxy.controller.param.CreateProductParam;
+import com.qxy.controller.param.UpdateProductParam;
 import com.qxy.dao.dataobject.ProductDO;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import com.qxy.service.dto.ProductDTO;
 import java.util.List;
@@ -13,6 +15,7 @@ public interface ProductService {
      * @param multipartFile
      * @return
      */
+    @Transactional
     Integer createProduct(CreateProductParam param, MultipartFile multipartFile);
 
     /**
@@ -42,4 +45,17 @@ public interface ProductService {
      */
     void storeProductStock(Integer productId);
 
+    /**
+     * 更新商品
+     * @param param
+     */
+    @Transactional
+    void updateProduct(UpdateProductParam param);
+
+    /**
+     * 删除商品
+     * @param productId
+     */
+    @Transactional
+    void deleteProduct(Integer productId);
 }

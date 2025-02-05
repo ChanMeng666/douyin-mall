@@ -3,16 +3,24 @@ package com.qxy.dao.dataobject;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.Date;
 
 @Data
-@EqualsAndHashCode(callSuper = true)
-public class ProductDO extends BaseDO{
+public class ProductDO implements Serializable {
     /**
-     * 商品ID
+     * 商品id
      */
-    private Integer id;
-
+    private Integer productId;
+    /**
+     * 创建时间
+     */
+    private Date createdAt;
+    /**
+     * 更新时间
+     */
+    private Date updatedAt;
     /**
      * 商品名
      */
@@ -37,4 +45,9 @@ public class ProductDO extends BaseDO{
      * 存货量
      */
     private Integer stock;
+
+    /**
+     * 商品状态
+     */
+    private String status;
 }

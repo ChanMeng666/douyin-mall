@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.qxy.dao.mapper.ProductDao">
-    <resultMap id="ProductResultMap" type="com.qxy.model.po.Product">
-        <id column="product_id" property="productId" />
+    <resultMap id="ProductResultMap" type="com.qxy.dao.dataobject.ProductDO">
+        <id column="product_id" property="id" />
         <result column="name" property="name" />
         <result column="description" property="description" />
         <result column="price" property="price" />
         <result column="stock" property="stock" />
-        <result column="status" property="status" />
         <result column="created_at" property="createdAt" />
         <result column="updated_at" property="updatedAt" />
         <result column="image_url" property="imageUrl" />
@@ -27,9 +26,6 @@
         <foreach collection="productId" open="(" close=")" item="id" separator=",">
             #{id}
         </foreach>
-    </select>
-    <select id="queryProducts" resultType="com.qxy.model.po.Product" resultMap="ProductResultMap">
-        select * from products
     </select>
 
     <update id="reduceProductStock">

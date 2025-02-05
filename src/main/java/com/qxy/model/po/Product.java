@@ -37,5 +37,5 @@ public class Product {
 
     private String imageUrl;
 
-    private String status;
+    private ProductStatus status = ProductStatus.ACTIVE;
 }

@@ -28,7 +28,7 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/product")
 public class ProductController {
 
     @Autowired
@@ -53,7 +53,7 @@ public class ProductController {
      * @param multipartFile 文件传输
      * @return
      */
-    @RequestMapping("/product/create")
+    @RequestMapping("/create")
     public Response<Integer> createProduct (@RequestPart("param") CreateProductParam param,
                                          @RequestPart("productPic") MultipartFile multipartFile) {
         return Response.<Integer>builder().code(ResponseCode.SUCCESS.getCode())
@@ -66,7 +66,7 @@ public class ProductController {
      * @param productId 商品id
      * @return
      */
-    @RequestMapping("/product/get")
+    @RequestMapping("/get")
     public Response<List<FindProductListResult>> getProduct(@RequestParam List<Integer> productId){
         if(null == productId||productId.size() == 0) {
             log.warn("请求参数为空");
@@ -84,7 +84,7 @@ public class ProductController {
      * 展示商品列表
      * @return
      */
-    @GetMapping("/product/list")
+    @GetMapping("/list")
     public Response<List<FindProductListResult>> listProducts() {
         List<ProductDTO> products = productService.listProducts();
         return Response.<List<FindProductListResult>>builder()
@@ -94,7 +94,7 @@ public class ProductController {
                 .build();
     }
 
-    @RequestMapping("/product/update")
+    @RequestMapping("/update")
     public Response<Boolean> updateProduct (@NonNull UpdateProductParam param) {
         if (null == param.getProductId() || param.getProductId() <= 0) {
             return Response.<Boolean>builder()
@@ -111,8 +111,8 @@ public class ProductController {
                 .build();
     }
 
-    @RequestMapping("/product/delete")
-    public Response<Boolean> deleteProduct (@NonNull Integer productId) {
+    @RequestMapping("/delete/{productId}")
+    public Response<Boolean> deleteProduct (@PathVariable Integer productId) {
         if(productId <= 0) {
             return Response.<Boolean>builder()
                     .code(ResponseCode.UN_ERROR.getCode())

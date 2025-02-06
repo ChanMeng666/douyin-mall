@@ -51,6 +51,12 @@
             <artifactId>jjwt</artifactId>
             <version>0.9.1</version>
         </dependency>
+        <!-- Sa-Token 权限认证-->
+        <dependency>
+            <groupId>cn.dev33</groupId>
+            <artifactId>sa-token-spring-boot-starter</artifactId>
+            <version>1.40.0</version>
+        </dependency>
         <dependency>
             <groupId>com.auth0</groupId>
             <artifactId>java-jwt</artifactId>
@@ -92,5 +98,7 @@
             <artifactId>junit</artifactId>
             <scope>test</scope>
         </dependency>
+
+
     </dependencies>
 </project>

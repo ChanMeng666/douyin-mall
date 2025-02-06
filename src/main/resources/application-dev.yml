@@ -52,6 +52,7 @@ spring:
 mybatis:
   mapper-locations: classpath:/mybatis/mapper/*.xml
   config-location:  classpath:/mybatis/config/mybatis-config.xml
+  type-handlers-package: com.qxy.common.handler
 
 #Redis
 redis:

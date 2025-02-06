@@ -1,9 +1,7 @@
 package com.qxy.dao;
 
 import com.qxy.model.po.AiOrder;
-import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Options;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -12,5 +10,5 @@ import java.util.List;
 public interface AiOrderDao {
     List<AiOrder> findByUserId(@Param("userId") Integer userId);
     AiOrder findByOrderId(@Param("orderId") Integer orderId);
-    int insertOrder(AiOrder order);
+    void insertOrder(AiOrder order);
 }

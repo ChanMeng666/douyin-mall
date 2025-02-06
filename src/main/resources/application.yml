@@ -4,6 +4,10 @@ spring:
   profiles:
     active: dev
 
+server:
+  # 端口
+  port: 8080
+
 ############## Sa-Token 配置  ##############
 sa-token:
   # token 名称（同时也是 cookie 名称）

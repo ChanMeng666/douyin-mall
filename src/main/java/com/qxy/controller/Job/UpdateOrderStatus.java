@@ -1,7 +1,7 @@
 package com.qxy.controller.Job;
 
 import com.qxy.dao.OrderItemsDao;
-import com.qxy.dao.dataobject.ProductDO;
+import com.qxy.model.po.ProductDO;
 import com.qxy.dao.ProductDao;
 import com.qxy.service.IOrderService;
 import lombok.extern.slf4j.Slf4j;

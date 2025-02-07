@@ -4,14 +4,14 @@ package com.qxy.service.impl;
 import com.qxy.common.constant.Constants;
 import com.qxy.common.exception.AppException;
 import com.qxy.common.response.ResponseCode;
-import com.qxy.controller.param.CreateProductParam;
-import com.qxy.controller.param.UpdateProductParam;
-import com.qxy.dao.dataobject.ProductDO;
+import com.qxy.controller.dto.product.CreateProductDTO;
+import com.qxy.controller.dto.product.UpdateProductDTO;
+import com.qxy.model.po.ProductDO;
 import com.qxy.dao.ProductDao;
 import com.qxy.infrastructure.redis.RedissonService;
 import com.qxy.service.PictureService;
 import com.qxy.service.ProductService;
-import com.qxy.service.dto.ProductDTO;
+import com.qxy.model.res.ProductRes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +35,7 @@ public class ProductServiceImpl implements ProductService {
     private RedissonService redissonService;
 
     @Override
-    public Integer createProduct(CreateProductParam param, MultipartFile multipartFile) {
+    public Integer createProduct(CreateProductDTO param, MultipartFile multipartFile) {
         String fileName = pictureService.savePicture(multipartFile);
         //存表
         ProductDO productDO = new ProductDO();
@@ -53,27 +53,27 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public ProductDTO getProductById(Integer productId) {
+    public ProductRes getProductById(Integer productId) {
         ProductDO productDO = productMapper.selectById(productId);
         if (productDO == null) {
             return null;
         }
-        return convertToDTO(productDO);
+        return convertToRES(productDO);
     }
 
     @Override
-    public List<ProductDTO> listProducts() {
+    public List<ProductRes> listProducts() {
         List<ProductDO> productDOs = productMapper.selectAll();
         return productDOs.stream()
-                .map(this::convertToDTO)
+                .map(this::convertToRES)
                 .collect(Collectors.toList());
     }
 
     @Override
-    public List<ProductDTO> batchSelect(List<Integer> productId) {
+    public List<ProductRes> batchSelect(List<Integer> productId) {
         List<ProductDO> productDOS = productMapper.selectByIds(productId);
         return productDOS.stream()
-                .map(this::convertToDTO)
+                .map(this::convertToRES)
                 .collect(Collectors.toList());
     }
 
@@ -92,7 +92,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public void updateProduct(UpdateProductParam param) {
+    public void updateProduct(UpdateProductDTO param) {
         //构造更新对象
         ProductDO productDO = new ProductDO();
         productDO.setProductId(param.getProductId());
@@ -118,20 +118,20 @@ public class ProductServiceImpl implements ProductService {
         }
     }
 
-    private ProductDTO convertToDTO(ProductDO productDO) {
+    private ProductRes convertToRES(ProductDO productDO) {
         if (null == productDO) {
             log.warn(ResponseCode.ILLEGAL_PARAMETER.getInfo());
             throw new AppException(ResponseCode.ILLEGAL_PARAMETER.getCode()
                     ,ResponseCode.ILLEGAL_PARAMETER.getInfo());
         }
-        ProductDTO dto = new ProductDTO();
-        dto.setProductId(productDO.getProductId());
-        dto.setName(productDO.getName());
-        dto.setDescription(productDO.getDescription());
-        dto.setPrice(productDO.getPrice());
-        dto.setStock(productDO.getStock());
-        dto.setImageUrl(productDO.getImageUrl());
-        return dto;
+        ProductRes res = new ProductRes();
+        res.setProductId(productDO.getProductId());
+        res.setName(productDO.getName());
+        res.setDescription(productDO.getDescription());
+        res.setPrice(productDO.getPrice());
+        res.setStock(productDO.getStock());
+        res.setImageUrl(productDO.getImageUrl());
+        return res;
     }
 
 

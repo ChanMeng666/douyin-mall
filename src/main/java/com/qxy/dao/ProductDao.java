@@ -1,9 +1,7 @@
 package com.qxy.dao;
 
-import com.qxy.dao.dataobject.ProductDO;
-import org.apache.ibatis.annotations.Insert;
+import com.qxy.model.po.ProductDO;
 import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Options;
 
 import java.util.List;
 

@@ -1,7 +1,6 @@
-package com.qxy.dao.dataobject;
+package com.qxy.model.po;
 
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 
 import java.io.Serializable;
 import java.math.BigDecimal;

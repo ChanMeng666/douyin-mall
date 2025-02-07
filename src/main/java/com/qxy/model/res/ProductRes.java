@@ -1,4 +1,4 @@
-package com.qxy.controller.result;
+package com.qxy.model.res;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -6,12 +6,10 @@ import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-
-
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
-public class FindProductListResult implements Serializable {
+@NoArgsConstructor
+public class ProductRes implements Serializable {
     //商品id
     private Integer productId;
     //商品名
@@ -24,4 +22,6 @@ public class FindProductListResult implements Serializable {
     private Integer stock;
     //商品图片
     private String imageUrl;
+    //商品状态
+    private String status;
 }

@@ -42,7 +42,9 @@ public class OrderServiceTest {
     private ProductService productService;
 
 
-    // region 库存扣减测试
+    /**
+     * 库存充足时扣减测试
+     * */
     @Test
     public void shouldSuccessWhenStockEnough() {
         // 初始化
@@ -60,6 +62,32 @@ public class OrderServiceTest {
         // 执行
         CreateOrderRes response = orderService.createOrder(request);
         log.info("创建订单结果: {}", response);
+    }
+
+
+    /**
+     * 测试库存不足回滚
+     * */
+    @Test
+    public void shouldRollbackWhenPartialStockInsufficient() {
+        // 初始化库存
+        Integer productId2 = 2;
+        mockRedisStock(productId2, 10);
+        List<CartItemDto> items = new ArrayList<>();
+        CartItemDto item = CartItemDto.builder()
+                .productId(productId2)
+                .quantity(5)
+                .totalPrice(BigDecimal.valueOf(2 * 999.99))
+                .build();
+        CartItemDto item2 = CartItemDto.builder()
+                .productId(productId2)
+                .quantity(6)
+                .totalPrice(BigDecimal.valueOf(2 * 999.99))
+                .build();
+        items.add(item);
+        items.add(item2);
+        CreateOrderReq request = buildValidRequest(1,items);
+        log.info("创建订单结果: {}", orderService.createOrder(request));
     }
 
     // region 测试工具方法

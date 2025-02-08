@@ -11,7 +11,7 @@
         <result column="created_at" property="createdAt" />
         <result column="updated_at" property="updatedAt" />
     </resultMap>
-    <insert id="createOrder">
+    <insert id="createOrder" useGeneratedKeys="true" keyProperty="orderId">
         insert into orders(user_id,status,total_amount,pay_type,created_at,updated_at)
         values(#{userId},#{status},#{totalAmount},#{payType},now(),now())
     </insert>

@@ -4,24 +4,21 @@ package com.qxy.controller;
 import com.qxy.common.exception.AppException;
 import com.qxy.common.response.Response;
 import com.qxy.common.response.ResponseCode;
-import com.qxy.controller.param.CreateProductParam;
-import com.qxy.controller.param.UpdateProductParam;
-import com.qxy.controller.result.FindProductListResult;
+import com.qxy.controller.dto.product.CreateProductDTO;
+import com.qxy.controller.dto.product.UpdateProductDTO;
+import com.qxy.controller.dto.product.FindProductListDTO;
 import com.qxy.service.PictureService;
 import com.qxy.service.ProductService;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
-import com.qxy.service.dto.ProductDTO;
+import com.qxy.model.res.ProductRes;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -54,7 +51,7 @@ public class ProductController {
      * @return
      */
     @RequestMapping("/create")
-    public Response<Integer> createProduct (@RequestPart("param") CreateProductParam param,
+    public Response<Integer> createProduct (@RequestPart("param") CreateProductDTO param,
                                          @RequestPart("productPic") MultipartFile multipartFile) {
         return Response.<Integer>builder().code(ResponseCode.SUCCESS.getCode())
                 .info(ResponseCode.SUCCESS.getInfo())
@@ -67,13 +64,13 @@ public class ProductController {
      * @return
      */
     @RequestMapping("/get")
-    public Response<List<FindProductListResult>> getProduct(@RequestParam List<Integer> productId){
+    public Response<List<FindProductListDTO>> getProduct(@RequestParam List<Integer> productId){
         if(null == productId||productId.size() == 0) {
             log.warn("请求参数为空");
             return Response.success();
         }
-        List<ProductDTO> products = productService.batchSelect(productId);
-        return Response.<List<FindProductListResult>>builder()
+        List<ProductRes> products = productService.batchSelect(productId);
+        return Response.<List<FindProductListDTO>>builder()
                 .code(ResponseCode.SUCCESS.getCode())
                 .info(ResponseCode.SUCCESS.getInfo())
                 .data(convertToFindProductListResult(products))
@@ -85,9 +82,9 @@ public class ProductController {
      * @return
      */
     @GetMapping("/list")
-    public Response<List<FindProductListResult>> listProducts() {
-        List<ProductDTO> products = productService.listProducts();
-        return Response.<List<FindProductListResult>>builder()
+    public Response<List<FindProductListDTO>> listProducts() {
+        List<ProductRes> products = productService.listProducts();
+        return Response.<List<FindProductListDTO>>builder()
                 .code(ResponseCode.SUCCESS.getCode())
                 .info(ResponseCode.SUCCESS.getInfo())
                 .data(convertToFindProductListResult(products))
@@ -95,7 +92,7 @@ public class ProductController {
     }
 
     @RequestMapping("/update")
-    public Response<Boolean> updateProduct (@NonNull UpdateProductParam param) {
+    public Response<Boolean> updateProduct (@NonNull UpdateProductDTO param) {
         if (null == param.getProductId() || param.getProductId() <= 0) {
             return Response.<Boolean>builder()
                     .code(ResponseCode.UN_ERROR.getCode())
@@ -128,14 +125,14 @@ public class ProductController {
                 .build();
     }
 
-    private List<FindProductListResult> convertToFindProductListResult(List<ProductDTO> products) {
+    private List<FindProductListDTO> convertToFindProductListResult(List<ProductRes> products) {
         if (null == products) {
             throw new AppException(ResponseCode.ILLEGAL_PARAMETER.getCode()
                     ,ResponseCode.ILLEGAL_PARAMETER.getInfo());
         }
         return products.stream()
                 .map(productDTO -> {
-                    FindProductListResult result = new FindProductListResult();
+                    FindProductListDTO result = new FindProductListDTO();
                     result.setDescription(productDTO.getDescription());
                     result.setProductId(productDTO.getProductId());
                     result.setName(productDTO.getName());

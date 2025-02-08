@@ -14,10 +14,11 @@
     </insert>
 
     <select id="getCartByUserId" resultMap="BaseResultMap">
-        SELECT c.*, ci.*
+        SELECT DISTINCT c.cart_id, c.user_id, c.created_at, c.updated_at
         FROM carts c
-                 LEFT JOIN cart_items ci ON c.cart_id = ci.cart_id
         WHERE c.user_id = #{userId}
+        ORDER BY c.created_at DESC
+        LIMIT 1
     </select>
 
     <delete id="deleteCart">

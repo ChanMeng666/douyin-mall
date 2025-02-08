@@ -1,4 +1,4 @@
-package com.qxy.controller.param;
+package com.qxy.controller.dto.product;
 
 import lombok.Data;
 
@@ -7,7 +7,7 @@ import java.math.BigDecimal;
 
 
 @Data
-public class UpdateProductParam implements Serializable {
+public class UpdateProductDTO implements Serializable {
     /**
      * 商品id
      */

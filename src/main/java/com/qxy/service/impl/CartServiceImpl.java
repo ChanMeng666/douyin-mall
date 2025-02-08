@@ -116,7 +116,7 @@ import com.qxy.dao.CartItemDao;
 import com.qxy.dao.CartDao;
 import com.qxy.service.CartService;
 import com.qxy.service.ProductService;
-import com.qxy.service.dto.ProductDTO;
+import com.qxy.model.res.ProductRes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -163,7 +163,7 @@ public class CartServiceImpl implements CartService {
             cart = cartRepository.getCartByUserId(userId);
         }
 
-        ProductDTO product = productService.getProductById(productId);
+        ProductRes product = productService.getProductById(productId);
         if (product == null) {
             throw new AppException(ResponseCode.UN_ERROR.getCode(), "Product not found");
         }
@@ -197,7 +197,7 @@ public class CartServiceImpl implements CartService {
                 .findFirst()
                 .orElseThrow(() -> new AppException(ResponseCode.UN_ERROR.getCode(), "Cart item not found"));
 
-        ProductDTO product = productService.getProductById(item.getProductId());
+        ProductRes product = productService.getProductById(item.getProductId());
         item.setQuantity(quantity);
         item.setTotalPrice(product.getPrice().multiply(new BigDecimal(quantity)));
         cartItemRepository.updateItem(item);

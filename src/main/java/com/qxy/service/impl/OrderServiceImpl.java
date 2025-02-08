@@ -2,6 +2,7 @@ package com.qxy.service.impl;
 
 import com.qxy.common.constant.Constants;
 import com.qxy.common.exception.AppException;
+import com.qxy.common.exception.AppExceptionCode;
 import com.qxy.dao.CartItemDao;
 import com.qxy.dao.OrderDao;
 import com.qxy.dao.OrderItemsDao;
@@ -82,7 +83,7 @@ public class OrderServiceImpl implements IOrderService {
         order.setPayType(createOrderReq.getPayType());
 
         //设置订单状态
-        order.setStatus(Constants.OrderStatus.CREATE.getCode());
+        order.setStatus(Constants.OrderStatus.PAY_WAIT.getCode());
 
         //设置用户id
         order.setUserId(createOrderReq.getUserId());
@@ -102,7 +103,7 @@ public class OrderServiceImpl implements IOrderService {
 
         //返回订单响应
         return CreateOrderRes.builder()
-                .status(Constants.OrderStatus.CREATE.getCode())
+                .status(Constants.OrderStatus.PAY_WAIT.getCode())
                 .orderId(order.getOrderId())
                 .createdAt(order.getCreatedAt())
                 .totalAmount(order.getTotalAmount())
@@ -131,14 +132,14 @@ public class OrderServiceImpl implements IOrderService {
                 //原子锁扣减   得到扣减后的库存
                 Long surplus = redissonService.addAndGet(cacheKey, -cartItem.getQuantity());
                 if (surplus < 0) {
-                    throw new AppException(cartItem.getCartItemId()+": 库存扣减失败");
+                    throw new AppException(AppExceptionCode.OrderExceptionCode.STOCK_INSUFFICIENT.getCode(),AppExceptionCode.OrderExceptionCode.STOCK_INSUFFICIENT.getInfo());
                 }
             }
             //将商品消耗放入延迟队列中消费
             productStockConsumerSendQueue(rollbackMap);
             return true;
         }catch (AppException e) {
-            log.error("库存扣减失败", e);
+            log.error("库存扣减失败 :", e);
             // 回滚已扣减库存
             rollbackStock(rollbackMap);
             return false;

@@ -1,6 +1,9 @@
 package com.qxy.controller.dto.order;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 
@@ -11,6 +14,9 @@ import java.math.BigDecimal;
  * @Version: 1.0
  */
 @Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class CartItemDto {
     /** 购物车项ID */
     private Integer cartItemId;

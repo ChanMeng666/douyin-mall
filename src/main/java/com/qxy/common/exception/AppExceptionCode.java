@@ -1,33 +1,28 @@
-package com.qxy.common.response;
+package com.qxy.common.exception;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+/**
+ * @Author: dawang
+ * @Description: 运行异常码
+ * @Date: 2025/2/8 23:27
+ * @Version: 1.0
+ */
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
-public enum ResponseCode {
-
-    SUCCESS("0000", "调用成功"),
-    UN_ERROR("0001", "调用失败"),
-    ILLEGAL_PARAMETER("0002", "非法参数"),
-    ;
-
+public class AppExceptionCode {
     private String code;
     private String info;
-
     @AllArgsConstructor
     @NoArgsConstructor
     @Getter
-    public enum Login {
-        TOKEN_ERROR("0003", "登录权限拦截"),
-
+    public enum OrderExceptionCode{
+        STOCK_INSUFFICIENT("stock_insufficient", "库存不足"),
         ;
         private String code;
         private String info;
     }
-
-
-
 }

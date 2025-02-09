@@ -17,7 +17,7 @@ import java.util.Map;
  */
 @Slf4j
 @Component
-public class UpdateProductStock {
+public class UpdateProductStockJob {
     @Resource
     private IOrderService orderService;
     @Resource

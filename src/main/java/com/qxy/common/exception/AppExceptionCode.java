@@ -24,5 +24,8 @@ public class AppExceptionCode {
         ;
         private String code;
         private String info;
+
+        public String getCode() { return code; }
+        public String getInfo() { return info; }
     }
 }

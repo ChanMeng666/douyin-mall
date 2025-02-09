@@ -132,6 +132,7 @@ public class OrderServiceImpl implements IOrderService {
                 //原子锁扣减   得到扣减后的库存
                 Long surplus = redissonService.addAndGet(cacheKey, -cartItem.getQuantity());
                 if (surplus < 0) {
+                    log.warn("库存不足: productId={}", cartItem.getProductId());
                     throw new AppException(AppExceptionCode.OrderExceptionCode.STOCK_INSUFFICIENT.getCode(),AppExceptionCode.OrderExceptionCode.STOCK_INSUFFICIENT.getInfo());
                 }
             }
@@ -139,7 +140,7 @@ public class OrderServiceImpl implements IOrderService {
             productStockConsumerSendQueue(rollbackMap);
             return true;
         }catch (AppException e) {
-            log.error("库存扣减失败 :", e);
+            log.error("库存扣减失败: code={}, info={}", e.getCode(), e.getInfo(), e);
             // 回滚已扣减库存
             rollbackStock(rollbackMap);
             return false;

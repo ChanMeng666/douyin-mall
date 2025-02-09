@@ -53,7 +53,7 @@ public interface IOrderService {
 
     /**
      * 回滚库存
-     * @param rollbackMap
+     * @param rollbackMap 商品id  + 数量
      */
     void rollbackStock(Map<Integer, Integer> rollbackMap);
 }

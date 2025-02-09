@@ -14,7 +14,7 @@
         insert into order_items (order_id, product_id, quantity, price, created_at, updated_at)
         values (#{orderId}, #{productId}, #{quantity}, #{price}, now(), now())
     </insert>
-    <select id="queryOrderItemByOrderId" resultType="com.qxy.model.po.ProductDO" resultMap="dataMap">
+    <select id="queryOrderItemByOrderId" resultType="com.qxy.model.po.OrderItems" resultMap="dataMap">
         select product_id, quantity
         from order_items
         where order_id = #{orderId}

@@ -23,7 +23,7 @@
     </select>
     <select id="getOvertimeOrders" resultType="java.lang.Integer">
         select order_id from orders
-        where status = 'create' and now() >= created_at + INTERVAL 30 MINUTE
+        where status = 'pay_wait' and now() >= created_at + INTERVAL 30 MINUTE
         ORDER BY order_id ASC
         LIMIT 50
     </select>

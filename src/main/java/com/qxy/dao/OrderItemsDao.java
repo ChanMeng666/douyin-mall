@@ -1,5 +1,6 @@
 package com.qxy.dao;
 
+import com.qxy.model.po.Product;
 import com.qxy.model.po.ProductDO;
 import com.qxy.model.po.OrderItems;
 import org.apache.ibatis.annotations.Mapper;
@@ -17,5 +18,5 @@ public interface OrderItemsDao {
 
     void insertOrderItems(OrderItems orderItems);
 
-    List<ProductDO> queryOrderItemByOrderId(int orderId);
+    List<OrderItems> queryOrderItemByOrderId(int orderId);
 }

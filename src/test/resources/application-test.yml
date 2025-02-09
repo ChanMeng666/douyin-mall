@@ -1,0 +1,41 @@
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://116.62.149.227:13306/douyin_mall?useUnicode=true&characterEncoding=utf8&autoReconnect=true&zeroDateTimeBehavior=convertToNull&serverTimezone=UTC&useSSL=true&allowPublicKeyRetrieval=true
+    username: root
+    password: 123456
+
+  # 添加 JPA 配置
+  jpa:
+    database-platform: org.hibernate.dialect.MySQL8Dialect
+    show-sql: true
+    hibernate:
+      ddl-auto: none
+    properties:
+      hibernate:
+        format_sql: true
+        use_sql_comments: true
+
+mybatis:
+  mapper-locations: classpath:mybatis/mapper/*.xml
+  type-aliases-package: com.qxy.model.po
+
+logging:
+  level:
+    com.qxy: DEBUG
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+
+# 禁用 Redis 配置
+redis:
+  enabled: false
+
+# 图片服务配置
+pic:
+  local-path: ./test-images/
+  url-prefix: http://test.example.com/images/
+
+# AI 服务配置
+dashscope:
+  api-key: test-api-key
+  model: test-model 

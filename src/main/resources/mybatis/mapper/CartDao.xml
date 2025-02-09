@@ -8,7 +8,8 @@
         <result column="updated_at" property="updatedAt" />
     </resultMap>
 
-    <insert id="createCart" parameterType="com.qxy.model.po.Cart">
+    <insert id="createCart" parameterType="com.qxy.model.po.Cart" 
+            useGeneratedKeys="true" keyProperty="cartId">
         INSERT INTO carts (user_id, created_at, updated_at)
         VALUES (#{userId}, NOW(), NOW())
     </insert>
@@ -22,6 +23,8 @@
     </select>
 
     <delete id="deleteCart">
-        DELETE FROM carts WHERE cart_id = #{cartId}
+        DELETE FROM carts 
+        WHERE cart_id = #{cartId} 
+        AND cart_id > 0
     </delete>
 </mapper>

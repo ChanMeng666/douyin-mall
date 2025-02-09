@@ -21,6 +21,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static java.lang.Thread.sleep;
+
 /**
  * @Author: dawang
  * @Description: 单元测试类
@@ -89,6 +91,14 @@ public class OrderServiceTest {
         items.add(item2);
         CreateOrderReq request = buildValidRequest(1,items);
         log.info("创建订单结果: {}", orderService.createOrder(request));
+    }
+
+    /**
+     * 测试超时订单回滚
+     * */
+    @Test
+    public void shouldAutoRollbackStockWhenTimeout() throws InterruptedException {
+        sleep(10000000);
     }
 
     // region 测试工具方法

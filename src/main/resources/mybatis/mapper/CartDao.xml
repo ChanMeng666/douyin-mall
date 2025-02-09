@@ -11,7 +11,7 @@
     <insert id="createCart" parameterType="com.qxy.model.po.Cart" 
             useGeneratedKeys="true" keyProperty="cartId">
         INSERT INTO carts (user_id, created_at, updated_at)
-        VALUES (#{userId}, NOW(), NOW())
+        VALUES (#{userId}, #{createdAt}, #{updatedAt})
     </insert>
 
     <select id="getCartByUserId" resultMap="BaseResultMap">
@@ -27,4 +27,51 @@
         WHERE cart_id = #{cartId} 
         AND cart_id > 0
     </delete>
+
+    <insert id="insertItem" parameterType="com.qxy.model.po.CartItem" 
+            useGeneratedKeys="true" keyProperty="cartItemId" keyColumn="cart_item_id">
+        INSERT INTO cart_item (
+            cart_id, product_id, quantity, total_price, create_at, update_at
+        ) VALUES (
+            #{cartId}, #{productId}, #{quantity}, #{totalPrice}, #{createAt}, #{updateAt}
+        )
+    </insert>
+
+    <update id="updateItem" parameterType="com.qxy.model.po.CartItem">
+        UPDATE cart_item
+        SET quantity = #{quantity},
+            total_price = #{totalPrice},
+            update_at = #{updateAt}
+        WHERE cart_item_id = #{cartItemId}
+        AND cart_id = #{cartId}
+    </update>
+
+    <select id="getItemsByCartId" resultType="com.qxy.model.po.CartItem">
+        SELECT 
+            cart_item_id as cartItemId,
+            cart_id as cartId,
+            product_id as productId,
+            quantity,
+            total_price as totalPrice,
+            create_at as createAt,
+            update_at as updateAt
+        FROM cart_item
+        WHERE cart_id = #{cartId}
+        ORDER BY create_at DESC
+    </select>
+
+    <select id="getItemByProductId" resultType="com.qxy.model.po.CartItem">
+        SELECT 
+            cart_item_id as cartItemId,
+            cart_id as cartId,
+            product_id as productId,
+            quantity,
+            total_price as totalPrice,
+            create_at as createAt,
+            update_at as updateAt
+        FROM cart_item
+        WHERE cart_id = #{cartId} 
+        AND product_id = #{productId}
+        LIMIT 1
+    </select>
 </mapper>

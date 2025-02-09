@@ -30,7 +30,7 @@ import java.io.IOException;
  */
 @Configuration
 @EnableConfigurationProperties(RedisProperties.class)
-@ConditionalOnProperty(name = "redis.enabled", havingValue = "true", matchIfMissing = true)
+@ConditionalOnProperty(name = "redis.enabled", havingValue = "true", matchIfMissing = false)
 public class RedisClientConfig {
 
     @Resource

@@ -1,0 +1,69 @@
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://116.62.149.227:13306/douyin_mall?useUnicode=true&characterEncoding=utf8&autoReconnect=true&allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=Asia/Shanghai&socketTimeout=60000&connectTimeout=60000
+    username: root
+    password: 123456
+    hikari:
+      minimum-idle: 5
+      maximum-pool-size: 10
+      idle-timeout: 300000
+      connection-timeout: 20000
+      connection-test-query: SELECT 1
+      validation-timeout: 5000
+      max-lifetime: 1200000
+      auto-commit: true
+      pool-name: TestHikariPool
+      transaction-isolation: TRANSACTION_READ_COMMITTED
+
+# JPA 配置
+jpa:
+  database-platform: org.hibernate.dialect.MySQL8Dialect
+  show-sql: true
+  hibernate:
+    ddl-auto: none
+  properties:
+    hibernate:
+      format_sql: true
+      use_sql_comments: true
+
+# 调度任务配置
+task:
+  scheduling:
+    enabled: false
+  execution:
+    enabled: false
+
+# Redis配置
+redis:
+  enabled: false
+  sdk:
+    config:
+      enabled: false
+
+# MyBatis配置
+mybatis:
+  mapper-locations: classpath:mybatis/mapper/*.xml
+  type-aliases-package: com.qxy.model.po
+  configuration:
+    map-underscore-to-camel-case: true
+    use-generated-keys: true
+    default-executor-type: REUSE
+    jdbc-type-for-null: NULL
+
+# 日志配置
+logging:
+  level:
+    com.qxy: DEBUG
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+
+# 图片服务配置
+pic:
+  local-path: ./test-images/
+  url-prefix: http://test.example.com/images/
+
+# AI 服务配置
+dashscope:
+  api-key: test-api-key
+  model: test-model 

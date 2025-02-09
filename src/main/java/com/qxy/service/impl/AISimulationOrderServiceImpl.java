@@ -44,7 +44,7 @@ public class AISimulationOrderServiceImpl implements AISimulationOrderService {
         AiOrder order = new AiOrder();
         order.setUserId(requestDTO.getUserId());
         order.setTotalAmount(product.getPrice());
-        order.setStatus("pay_wait");
+        order.setStatus("pending");
         aiOrderMapper.insertOrder(order);
 
         // 4. 扣减库存
@@ -54,7 +54,7 @@ public class AISimulationOrderServiceImpl implements AISimulationOrderService {
         AiOrderResponseDTO response = new AiOrderResponseDTO();
         response.setOrderId(String.valueOf(order.getOrderId()));
         response.setPaymentUrl(generatePaymentUrl(order.getOrderId()));
-        response.setStatus("pending");
+        response.setStatus("paid");
         return response;
     }
 

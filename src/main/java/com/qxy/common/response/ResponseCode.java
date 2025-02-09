@@ -24,9 +24,10 @@ public enum ResponseCode {
         LOGIN_SUCCESS("0003","登录成功"),
         LOGIN_ERROR("0004","登录失败"),
         ;
-
         private String code;
         private String info;
     }
+
+
 
 }

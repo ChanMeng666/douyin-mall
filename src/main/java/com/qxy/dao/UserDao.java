@@ -14,18 +14,23 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface UserDao {
     /**
-     * 通过用户ID获取用户所有信息
+     * 通过用户ID获取User类的成员
      * @param userId
      * @return User
      */
     User getUserInfoByUserId(Integer userId);
 
     /**
-     * 通过用户名获取用户所有信息
+     * 通过用户名获取User类的成员
      * @param userName
      * @return User
      */
     User getUserInfoByUserName(String userName);
 
+    /**
+     * 通过用户名获取用户密码
+     * @param userName
+     * @return
+     */
     String getPassWordByUserName(String userName);
 }

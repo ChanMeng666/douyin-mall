@@ -1,6 +1,7 @@
 package com.qxy.service;
 
-import com.qxy.model.po.User;
+import cn.dev33.satoken.util.SaResult;
+import com.qxy.controller.dto.User.LoginDTO;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -10,19 +11,6 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public interface UserService {
-   /**
-    *  获取用户信息
-    *  @param userId
-    *  @return User
-    */
-   User getUserInfoByUserId(Integer userId);
 
-   /**
-    *
-    * @param userName
-    * @return
-    */
-   User getUserInfoByUserName(String userName);
-
-   String getPassWordByUserName(String userName);
+   SaResult Login(LoginDTO logindto);
 }

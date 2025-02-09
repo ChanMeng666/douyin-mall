@@ -1,5 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.qxy.dao.RoleDao">
+    <resultMap id="RoleResultMap" type="com.qxy.model.po.Role">
+        <id column="role_id" property="RoleId" />
+        <result column="role_name" property="RoleName" />
+        <result column="role_code" property="RoleCode" />
+    </resultMap>
+
+    <select id="getRoleByUserId" resultType="java.lang.String" >
+        select role_code
+        from role r , users u , user_role ur
+        where u.user_id = #{userId}
+          and u.user_id = ur.user_id
+          and ur.role_id = r.role_id
+    </select>
 
 </mapper>

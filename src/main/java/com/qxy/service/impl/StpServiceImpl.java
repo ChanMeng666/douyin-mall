@@ -7,9 +7,12 @@ package com.qxy.service.impl;
  */
 
 import cn.dev33.satoken.stp.StpInterface;
+import com.qxy.dao.PermissionDao;
+import com.qxy.dao.RoleDao;
+import com.qxy.dao.UserDao;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -18,20 +21,21 @@ import java.util.List;
 @Component    // 保证此类被 SpringBoot 扫描，完成 Sa-Token 的自定义权限验证扩展
 public class StpServiceImpl implements StpInterface {
 
+    @Autowired
+    private PermissionDao permissionDao;
+    @Autowired
+    private RoleDao roleDao;
+    @Autowired
+    private UserDao userDao;
+
     /**
      * 返回一个账号所拥有的权限码集合
      */
     @Override
     public List<String> getPermissionList(Object loginId, String loginType) {
         // 本 list 仅做模拟，实际项目中要根据具体业务逻辑来查询权限
-        List<String> list = new ArrayList<String>();
-        list.add("101");
-        list.add("user.add");
-        list.add("user.update");
-        list.add("user.get");
-        // list.add("user.delete");
-        list.add("art.*");
-        return list;
+        Integer useId = userDao.getUserInfoByUserName(loginId.toString()).getUserId();
+        return permissionDao.getPermissionByUserId(useId);
     }
 
     /**
@@ -40,10 +44,8 @@ public class StpServiceImpl implements StpInterface {
     @Override
     public List<String> getRoleList(Object loginId, String loginType) {
         // 本 list 仅做模拟，实际项目中要根据具体业务逻辑来查询角色
-        List<String> list = new ArrayList<String>();
-        list.add("admin");
-        list.add("super-admin");
-        return list;
+        Integer useId = userDao.getUserInfoByUserName(loginId.toString()).getUserId();
+        return roleDao.getRoleByUserId(useId);
     }
 
 }

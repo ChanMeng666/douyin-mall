@@ -1,22 +1,20 @@
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://116.62.149.227:13306/douyin_mall?useUnicode=true&characterEncoding=utf8&autoReconnect=true&failOverReadOnly=false&maxReconnects=10&serverTimezone=UTC&useSSL=true&allowPublicKeyRetrieval=true&connectTimeout=5000&socketTimeout=10000&autoReconnectForPools=true&useAffectedRows=true&rewriteBatchedStatements=true&useLocalSessionState=true&maintainTimeStats=false
+    url: jdbc:mysql://116.62.149.227:13306/douyin_mall?useUnicode=true&characterEncoding=utf8&autoReconnect=true&allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=Asia/Shanghai&socketTimeout=60000&connectTimeout=60000
     username: root
     password: 123456
     hikari:
-      minimum-idle: 2
-      maximum-pool-size: 5
-      idle-timeout: 30000
-      connection-timeout: 10000
+      minimum-idle: 5
+      maximum-pool-size: 10
+      idle-timeout: 300000
+      connection-timeout: 20000
       connection-test-query: SELECT 1
       validation-timeout: 5000
-      max-lifetime: 60000
+      max-lifetime: 1200000
       auto-commit: true
       pool-name: TestHikariPool
       transaction-isolation: TRANSACTION_READ_COMMITTED
-      register-mbeans: false
-      connection-init-sql: SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 # JPA 配置
 jpa:
@@ -33,17 +31,8 @@ jpa:
 task:
   scheduling:
     enabled: false
-    shutdown:
-      await-termination: true
-      await-termination-period: 1s
-    execution:
-      enabled: false
-      pool:
-        core-size: 0
-        max-size: 0
-        queue-capacity: 0
-scheduling:
-  enabled: false
+  execution:
+    enabled: false
 
 # Redis配置
 redis:

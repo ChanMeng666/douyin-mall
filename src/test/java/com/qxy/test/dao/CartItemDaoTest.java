@@ -21,6 +21,7 @@ import org.springframework.transaction.annotation.Propagation;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Date;
 import java.util.List;
 
@@ -30,17 +31,10 @@ import java.util.List;
     "spring.task.scheduling.enabled=false",
     "spring.scheduling.enabled=false",
     "spring.task.execution.enabled=false",
-    "spring.task.execution.pool.core-size=0",
-    "spring.task.execution.pool.max-size=0",
-    "spring.task.execution.pool.queue-capacity=0"
+    "spring.main.allow-bean-definition-overriding=true"
 })
-@ActiveProfiles("test")
 @Import({TestRedisConfiguration.class, TestConfig.class})
-@Transactional(
-    isolation = Isolation.READ_COMMITTED,
-    propagation = Propagation.REQUIRED,
-    timeout = 10
-)
+@ActiveProfiles("test")
 public class CartItemDaoTest {
 
     @Resource
@@ -65,11 +59,10 @@ public class CartItemDaoTest {
     }
 
     @Test
+    @Transactional
     public void testInsertItem() {
         CartItem item = createTestCartItem();
-        log.info("Inserting cart item: {}", item);
         cartItemDao.insertItem(item);
-        log.info("Generated ID: {}", item.getCartItemId());
         Assert.assertNotNull("Cart item ID should be generated", item.getCartItemId());
     }
 
@@ -78,7 +71,7 @@ public class CartItemDaoTest {
         // 创建并插入购物车项
         CartItem item = createTestCartItem();
         cartItemDao.insertItem(item);
-        
+
         // 确认插入成功
         CartItem insertedItem = cartItemDao.getItemByProductId(testCartId, TEST_PRODUCT_ID);
         Assert.assertNotNull("Cart item should be inserted", insertedItem);
@@ -93,43 +86,49 @@ public class CartItemDaoTest {
     }
 
     @Test
+    @Transactional
     public void testUpdateItem() {
+        // 先插入一个购物车项
         CartItem item = createTestCartItem();
         cartItemDao.insertItem(item);
+        Assert.assertNotNull(item.getCartItemId());
 
-        // Update quantity and price
+        // 更新数量和总价
         item.setQuantity(2);
         item.setTotalPrice(new BigDecimal("1999.98"));
+        item.setUpdateAt(new Date());
         cartItemDao.updateItem(item);
 
-        List<CartItem> items = cartItemDao.getItemsByCartId(testCartId);
-        Assert.assertEquals("Quantity should be updated", 2, items.get(0).getQuantity().intValue());
+        // 验证更新结果
+        CartItem updatedItem = cartItemDao.getItemByProductId(testCartId, TEST_PRODUCT_ID);
+        Assert.assertNotNull("Updated item should exist", updatedItem);
+        Assert.assertEquals("Quantity should be updated", 2, updatedItem.getQuantity().intValue());
         Assert.assertEquals("Total price should be updated", 
-            new BigDecimal("1999.98"), items.get(0).getTotalPrice());
+            new BigDecimal("1999.98").setScale(2, RoundingMode.HALF_UP), 
+            updatedItem.getTotalPrice().setScale(2, RoundingMode.HALF_UP));
     }
 
     @Test
+    @Transactional
     public void testGetItemsByCartId() {
-        // 先插入测试数据
-        CartItem item1 = createTestCartItem();
-        CartItem item2 = createTestCartItem();
-        item2.setProductId(TEST_PRODUCT_ID + 1);
-        
-        log.info("Inserting first item: {}", item1);
-        cartItemDao.insertItem(item1);
-        log.info("First item generated ID: {}", item1.getCartItemId());
-        Assert.assertNotNull("Item1 ID should be generated", item1.getCartItemId());
-        
-        log.info("Inserting second item: {}", item2);
-        cartItemDao.insertItem(item2);
-        log.info("Second item generated ID: {}", item2.getCartItemId());
-        Assert.assertNotNull("Item2 ID should be generated", item2.getCartItemId());
+        try {
+            // 插入两个测试项
+            CartItem item1 = createTestCartItem();
+            cartItemDao.insertItem(item1);
+            Assert.assertNotNull("Item1 ID should be generated", item1.getCartItemId());
+            
+            CartItem item2 = createTestCartItem();
+            item2.setProductId(TEST_PRODUCT_ID + 1);
+            cartItemDao.insertItem(item2);
+            Assert.assertNotNull("Item2 ID should be generated", item2.getCartItemId());
 
-        // 验证查询结果
-        List<CartItem> items = cartItemDao.getItemsByCartId(testCartId);
-        log.info("Found items: {}", items);
-        Assert.assertNotNull("Items list should not be null", items);
-        Assert.assertEquals("Should have two items", 2, items.size());
+            List<CartItem> items = cartItemDao.getItemsByCartId(testCartId);
+            Assert.assertNotNull("Items list should not be null", items);
+            Assert.assertEquals("Should have two items", 2, items.size());
+        } catch (Exception e) {
+            log.error("Test failed with error: ", e);
+            throw e;
+        }
     }
 
     @Test

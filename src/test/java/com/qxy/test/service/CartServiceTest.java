@@ -1,8 +1,10 @@
 package com.qxy.test.service;
 
+import com.qxy.common.exception.AppException;
 import com.qxy.controller.dto.cart.CartDTO;
 import com.qxy.controller.dto.cart.CartItemDTO;
 import com.qxy.service.CartService;
+import com.qxy.service.ProductService;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.After;
 import org.junit.Assert;
@@ -15,23 +17,40 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.List;
 
 @Slf4j
 @RunWith(SpringRunner.class)
 @SpringBootTest
+@Transactional
 public class CartServiceTest {
 
     @Autowired
     private CartService cartService;
 
+    @Autowired
+    private ProductService productService;
+
     private static final Integer TEST_USER_ID = 10000;
     private static final Integer TEST_PRODUCT_ID = 1; // iPhone 15
-    private static final BigDecimal PRODUCT_PRICE = new BigDecimal("999.99"); // 修正为正确的价格
+    private static final BigDecimal PRODUCT_PRICE = new BigDecimal("999.99");
 
     @Before
     public void setup() {
-        cleanupTestData();
+        try {
+            cleanupTestData();
+            // 确保测试商品的库存缓存存在
+            productService.storeProductStock(TEST_PRODUCT_ID);
+            productService.storeProductStock(TEST_PRODUCT_ID + 1);
+            
+            // 验证数据库连接
+            CartDTO cart = cartService.getCart(TEST_USER_ID);
+            log.info("Database connection verified");
+        } catch (Exception e) {
+            log.error("Failed to setup test environment: ", e);
+            throw new RuntimeException("Failed to setup test environment", e);
+        }
     }
 
     @Test
@@ -150,6 +169,54 @@ public class CartServiceTest {
         }
     }
 
+    @Test
+    @Transactional
+    public void testAddMultipleItemsToCart() {
+        try {
+            // 1. 创建购物车
+            cartService.createCart(TEST_USER_ID);
+
+            // 2. 添加多个商品
+            cartService.addItem(TEST_USER_ID, TEST_PRODUCT_ID, 2);      // iPhone 15: 999.99 * 2
+            cartService.addItem(TEST_USER_ID, TEST_PRODUCT_ID + 1, 1);  // MacBook Pro: 1999.99 * 1
+
+            // 3. 验证购物车
+            CartDTO cart = cartService.getCart(TEST_USER_ID);
+            Assert.assertNotNull("Cart should not be null", cart);
+            Assert.assertEquals("Should have two items", 2, cart.getCartItems().size());
+
+            // 验证总金额计算
+            BigDecimal expectedTotal = PRODUCT_PRICE.multiply(new BigDecimal("2"))
+                    .add(new BigDecimal("1999.99")); // 第二个商品的价格
+            
+            BigDecimal actualTotal = cart.getCartItems().stream()
+                    .map(CartItemDTO::getTotalPrice)
+                    .reduce(BigDecimal.ZERO, BigDecimal::add);
+                    
+            Assert.assertEquals("Total price should match", 
+                expectedTotal.setScale(2, RoundingMode.HALF_UP),
+                actualTotal.setScale(2, RoundingMode.HALF_UP));
+
+            log.info("Successfully tested adding multiple items to cart");
+        } catch (Exception e) {
+            log.error("Failed to test multiple items: ", e);
+            throw e;
+        }
+    }
+
+    @Test(expected = AppException.class)
+    @Transactional
+    public void testUpdateQuantityWithInvalidCartItem() {
+        cartService.updateItemQuantity(999999, 1);
+    }
+
+    @Test(expected = AppException.class)
+    @Transactional
+    public void testAddItemWithInvalidQuantity() {
+        cartService.createCart(TEST_USER_ID);
+        cartService.addItem(TEST_USER_ID, TEST_PRODUCT_ID, -1);
+    }
+
     private void cleanupTestData() {
         try {
             CartDTO existingCart = cartService.getCart(TEST_USER_ID);
@@ -164,6 +231,10 @@ public class CartServiceTest {
 
     @After
     public void cleanup() {
-        cleanupTestData();
+        try {
+            cleanupTestData();
+        } catch (Exception e) {
+            log.warn("Error during cleanup", e);
+        }
     }
 }

@@ -16,26 +16,30 @@ spring:
   datasource:
     username: root
     password: 123456
-    url: jdbc:mysql://116.62.149.227:13306/douyin_mall?useUnicode=true&characterEncoding=utf8&autoReconnect=true&zeroDateTimeBehavior=convertToNull&serverTimezone=UTC&useSSL=true
+    url: jdbc:mysql://116.62.149.227:13306/douyin_mall?useUnicode=true&characterEncoding=utf8&autoReconnect=true&zeroDateTimeBehavior=convertToNull&serverTimezone=UTC&useSSL=true&allowPublicKeyRetrieval=true
     driver-class-name: com.mysql.cj.jdbc.Driver
     hikari:
-      connection-timeout: 60000 # 1 minute
-      idle-timeout: 600000 # 10 minutes
-      max-lifetime: 1800000 # 30 minutes
+      connection-timeout: 30000
       maximum-pool-size: 10
       minimum-idle: 5
+      idle-timeout: 300000
+      max-lifetime: 900000
       connection-test-query: SELECT 1
+      validation-timeout: 5000
+      auto-commit: true
+      transaction-isolation: TRANSACTION_READ_COMMITTED
 
   # 添加JPA配置
   jpa:
     database-platform: org.hibernate.dialect.MySQL8Dialect
     show-sql: true
     hibernate:
-      ddl-auto: update
+      ddl-auto: none
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQL8Dialect
         format_sql: true
+        connection.provider_disables_autocommit: false
 
   hikari:
     pool-name: Retail_HikariCP

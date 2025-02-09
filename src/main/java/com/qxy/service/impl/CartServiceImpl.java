@@ -1,109 +1,3 @@
-//package com.qxy.service.impl;
-//
-//import com.qxy.common.exception.AppException;
-//import com.qxy.common.response.ResponseCode;
-//import com.qxy.model.po.Cart;
-//import com.qxy.model.po.CartItem;
-//import com.qxy.dao.CartItemDao;
-//import com.qxy.dao.CartDao;
-//import com.qxy.service.CartService;
-//import com.qxy.service.ProductService;
-//import com.qxy.service.dto.ProductDTO;
-//import org.springframework.beans.factory.annotation.Autowired;
-//import org.springframework.stereotype.Service;
-//import org.springframework.transaction.annotation.Transactional;
-//
-//import java.math.BigDecimal;
-//
-//@Service
-//public class CartServiceImpl implements CartService {
-//
-//    @Autowired
-//    private CartDao cartRepository;
-//
-//    @Autowired
-//    private CartItemDao cartItemRepository;
-//
-//    @Autowired
-//    private ProductService productService;
-//
-//    @Override
-//    @Transactional
-//    public void createCart(Integer userId) {
-//        Cart cart = new Cart();
-//        cart.setUserId(userId);
-//        cartRepository.createCart(cart);
-//    }
-//
-//    @Override
-//    public Cart getCart(Integer userId) {
-//        Cart cart = cartRepository.getCartByUserId(userId);
-//        if (cart == null) {
-//            return null;
-//        }
-//        cart.setCartItems(cartItemRepository.getItemsByCartId(cart.getCartId()));
-//        return cart;
-//    }
-//
-//    @Override
-//    @Transactional
-//    public void addItem(Integer userId, Integer productId, Integer quantity) {
-//        Cart cart = getCart(userId);
-//        if (cart == null) {
-//            createCart(userId);
-//            cart = getCart(userId);
-//        }
-//
-//        // Verify product exists and get price
-//        ProductDTO product = productService.getProductById(productId);
-//        if (product == null) {
-//            throw new AppException(ResponseCode.UN_ERROR.getCode(), "Product not found");
-//        }
-//
-//        CartItem existingItem = cartItemRepository.getItemByProductId(cart.getCartId(), productId);
-//        if (existingItem != null) {
-//            existingItem.setQuantity(existingItem.getQuantity() + quantity);
-//            existingItem.setTotalPrice(product.getPrice().multiply(new BigDecimal(existingItem.getQuantity())));
-//            cartItemRepository.updateItem(existingItem);
-//        } else {
-//            CartItem newItem = new CartItem();
-//            newItem.setCartId(cart.getCartId());
-//            newItem.setProductId(productId);
-//            newItem.setQuantity(quantity);
-//            newItem.setTotalPrice(product.getPrice().multiply(new BigDecimal(quantity)));
-//            cartItemRepository.insertItem(newItem);
-//        }
-//    }
-//
-//    @Override
-//    @Transactional
-//    public void removeItem(Integer cartItemId) {
-//        cartItemRepository.deleteItem(cartItemId);
-//    }
-//
-//    @Override
-//    @Transactional
-//    public void updateItemQuantity(Integer cartItemId, Integer quantity) {
-//        CartItem item = cartItemRepository.getItemsByCartId(cartItemId)
-//                .stream()
-//                .findFirst()
-//                .orElseThrow(() -> new AppException(ResponseCode.UN_ERROR.getCode(), "Cart item not found"));
-//
-//        ProductDTO product = productService.getProductById(item.getProductId());
-//        item.setQuantity(quantity);
-//        item.setTotalPrice(product.getPrice().multiply(new BigDecimal(quantity)));
-//        cartItemRepository.updateItem(item);
-//    }
-//
-//    @Override
-//    @Transactional
-//    public void deleteCart(Integer cartId) {
-//        cartRepository.deleteCart(cartId);
-//    }
-//}
-
-
-
 package com.qxy.service.impl;
 
 import com.qxy.common.exception.AppException;
@@ -122,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
@@ -157,6 +52,10 @@ public class CartServiceImpl implements CartService {
     @Override
     @Transactional
     public void addItem(Integer userId, Integer productId, Integer quantity) {
+        if (quantity <= 0) {
+            throw new AppException(ResponseCode.UN_ERROR.getCode(), "Invalid quantity");
+        }
+
         Cart cart = cartRepository.getCartByUserId(userId);
         if (cart == null) {
             createCart(userId);
@@ -170,37 +69,58 @@ public class CartServiceImpl implements CartService {
 
         CartItem existingItem = cartItemRepository.getItemByProductId(cart.getCartId(), productId);
         if (existingItem != null) {
-            existingItem.setQuantity(existingItem.getQuantity() + quantity);
-            existingItem.setTotalPrice(product.getPrice().multiply(new BigDecimal(existingItem.getQuantity())));
+            int newQuantity = existingItem.getQuantity() + quantity;
+            existingItem.setQuantity(newQuantity);
+            existingItem.setTotalPrice(product.getPrice().multiply(new BigDecimal(newQuantity)));
             cartItemRepository.updateItem(existingItem);
         } else {
-            CartItem newItem = new CartItem();
-            newItem.setCartId(cart.getCartId());
-            newItem.setProductId(productId);
-            newItem.setQuantity(quantity);
-            newItem.setTotalPrice(product.getPrice().multiply(new BigDecimal(quantity)));
+            CartItem newItem = CartItem.builder()
+                .cartId(cart.getCartId())
+                .productId(productId)
+                .quantity(quantity)
+                .totalPrice(product.getPrice().multiply(new BigDecimal(quantity)))
+                .build();
             cartItemRepository.insertItem(newItem);
         }
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public void removeItem(Integer cartItemId) {
-        cartItemRepository.deleteItem(cartItemId);
+        try {
+            cartItemRepository.deleteItem(cartItemId);
+        } catch (Exception e) {
+            throw new AppException(ResponseCode.UN_ERROR.getCode(), "Failed to remove cart item");
+        }
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public void updateItemQuantity(Integer cartItemId, Integer quantity) {
-        CartItem item = cartItemRepository.getItemsByCartId(cartItemId)
-                .stream()
-                .findFirst()
-                .orElseThrow(() -> new AppException(ResponseCode.UN_ERROR.getCode(), "Cart item not found"));
+        if (quantity <= 0) {
+            throw new AppException(ResponseCode.UN_ERROR.getCode(), "Invalid quantity");
+        }
 
-        ProductRes product = productService.getProductById(item.getProductId());
-        item.setQuantity(quantity);
-        item.setTotalPrice(product.getPrice().multiply(new BigDecimal(quantity)));
-        cartItemRepository.updateItem(item);
+        try {
+            List<CartItem> items = cartItemRepository.getItemsByCartId(cartItemId);
+            if (items == null || items.isEmpty()) {
+                throw new AppException(ResponseCode.UN_ERROR.getCode(), "Cart item not found");
+            }
+
+            CartItem item = items.get(0);
+            ProductRes product = productService.getProductById(item.getProductId());
+            if (product == null) {
+                throw new AppException(ResponseCode.UN_ERROR.getCode(), "Product not found");
+            }
+
+            item.setQuantity(quantity);
+            item.setTotalPrice(product.getPrice().multiply(new BigDecimal(quantity)));
+            cartItemRepository.updateItem(item);
+        } catch (AppException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new AppException(ResponseCode.UN_ERROR.getCode(), "Failed to update cart item");
+        }
     }
 
     @Override
@@ -210,6 +130,10 @@ public class CartServiceImpl implements CartService {
     }
 
     private CartDTO convertToDTO(Cart cart) {
+        if (cart == null) {
+            return null;
+        }
+
         CartDTO dto = new CartDTO();
         dto.setCartId(cart.getCartId());
         dto.setUserId(cart.getUserId());

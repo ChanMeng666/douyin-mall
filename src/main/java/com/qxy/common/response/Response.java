@@ -23,4 +23,5 @@ public class Response<T>{
     public static Response success() {
         return new Response(ResponseCode.SUCCESS.getCode(), ResponseCode.SUCCESS.getInfo(), null);
     }
+
 }

@@ -9,6 +9,7 @@
         <result column="phone" property="phone" />
         <result column="created_at" property="createdAt" />
         <result column="updated_at" property="updatedAt" />
+        <result column="status" property="status" />
     </resultMap>
 
     <select id="getUserInfoByUserId" resultType="com.qxy.model.po.User" >
@@ -19,12 +20,29 @@
     <select id="getUserInfoByUserName" resultType="com.qxy.model.po.User" resultMap="UserResultMap">
         select * from users
         where username = #{userName}
-        or email = #{email}
+    </select>
+
+    <select id="getUserInfoByEmail" resultType="com.qxy.model.po.User" resultMap="UserResultMap">
+        select * from users
+        where email = #{email}
+    </select>
+
+    <select id="getUserInfoByPhone" resultType="com.qxy.model.po.User" resultMap="UserResultMap">
+        select * from users
+        where phone = #{phone}
     </select>
 
     <select id="getPassWordByUserName" resultType="java.lang.String" >
         select password from users
         where username = #{username}
     </select>
+
+    <insert id="createUser" useGeneratedKeys="true" keyProperty="userId" parameterType="com.qxy.model.po.User" >
+        insert into users (username,password,email,phone,created_at,updated_at,status)
+        values(#{userName},#{Password},#{email},#{phone},now(),now(),#{status});
+        insert into user_role(user_id, role_id)
+        values (#{userId},#{role_id});
+
+    </insert>
 
 </mapper>

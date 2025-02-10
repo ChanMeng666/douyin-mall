@@ -35,24 +35,17 @@ public class UserController {
         log.info("*******************");
         log.info(logindto.toString());
         log.info("*******************");
-//        if(!StpUtil.isLogin()){
-//            if(userService.getUserInfoByUserName(username)==null) return SaResult.error("用户名不存在");
-//            else if(userService.getUserInfoByUserName(username).getPassword().equals(password)){
-//                StpUtil.login(username);
-//                SaTokenInfo tokenInfo= StpUtil.getTokenInfo();
-//                return SaResult.ok("登录成功"+tokenInfo);
-//            }
-//            else return SaResult.error("密码错误，登录失败");
-//        }
-//        else return SaResult.ok("已登录，请勿重复登录"+StpUtil.getTokenInfo());
-////        return SaResult.error("登录失败");
         return userService.Login(logindto);
     }
 
     @RequestMapping(value ="doLogout",produces = {"application/json;charset=UTF-8"})
     public SaResult doLogout(){
-        StpUtil.logout();
-        return SaResult.ok("用户退出登录");
+        return userService.Logout();
+    }
+
+    @RequestMapping(value ="SignUp",produces = {"application/json;charset=UTF-8"})
+    public SaResult SignUp(){
+        return userService.Logout();
     }
 
 //    @SaCheckLogin

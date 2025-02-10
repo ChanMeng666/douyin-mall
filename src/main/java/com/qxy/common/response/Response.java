@@ -24,16 +24,4 @@ public class Response<T>{
         return new Response(ResponseCode.SUCCESS.getCode(), ResponseCode.SUCCESS.getInfo(), null);
     }
 
-    /**
-     * 一般结果响应，可自定义响应码和信息
-     *
-     * @param code 响应码
-     * @param info 响应信息
-     * @return Response类
-     */
-    public void result(String code, String info, T data){
-        this.code=code;
-        this.info=info;
-        this.data=data;
-    }
 }

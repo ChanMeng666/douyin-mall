@@ -72,6 +72,7 @@ public class GlobalExceptionHandler {
     }
 
     // 拦截：缺少角色异常
+    @ResponseBody
     @ExceptionHandler(NotRoleException.class)
     public SaResult handlerNotRoleException(NotRoleException e) {
         e.printStackTrace();

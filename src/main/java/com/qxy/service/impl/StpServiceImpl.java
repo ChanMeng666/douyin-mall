@@ -33,7 +33,6 @@ public class StpServiceImpl implements StpInterface {
      */
     @Override
     public List<String> getPermissionList(Object loginId, String loginType) {
-        // 本 list 仅做模拟，实际项目中要根据具体业务逻辑来查询权限
         Integer useId = userDao.getUserInfoByUserName(loginId.toString()).getUserId();
         return permissionDao.getPermissionByUserId(useId);
     }
@@ -43,7 +42,6 @@ public class StpServiceImpl implements StpInterface {
      */
     @Override
     public List<String> getRoleList(Object loginId, String loginType) {
-        // 本 list 仅做模拟，实际项目中要根据具体业务逻辑来查询角色
         Integer useId = userDao.getUserInfoByUserName(loginId.toString()).getUserId();
         return roleDao.getRoleByUserId(useId);
     }

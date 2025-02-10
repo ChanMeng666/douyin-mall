@@ -21,8 +21,8 @@ public enum ResponseCode {
     @NoArgsConstructor
     @Getter
     public enum Login {
-        TOKEN_ERROR("0003", "登录权限拦截"),
-
+        LOGIN_SUCCESS("0003","登录成功"),
+        LOGIN_ERROR("0004","登录失败"),
         ;
         private String code;
         private String info;

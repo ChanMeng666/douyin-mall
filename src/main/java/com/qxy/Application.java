@@ -1,5 +1,6 @@
 package com.qxy;
 
+import cn.dev33.satoken.SaManager;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.boot.SpringApplication;
@@ -14,6 +15,7 @@ public class Application {
 
     public static void main(String[] args){
         SpringApplication.run(Application.class);
+        System.out.println("启动成功：sa-token配置如下：" + SaManager.getConfig());
     }
 
 }

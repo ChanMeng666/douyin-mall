@@ -1,6 +1,9 @@
 package com.qxy.model.po;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.Date;
 
@@ -11,6 +14,9 @@ import java.util.Date;
  * @Version: 1.0
  */
 @Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class User {
     private Integer userId;
     private String userName;
@@ -19,4 +25,5 @@ public class User {
     private String phone;
     private Date createdAt;
     private Date updatedAt;
+
 }

@@ -15,7 +15,13 @@
     </select>
 
     <insert id="insertOrder" parameterType="com.qxy.model.po.AiOrder" useGeneratedKeys="true" keyProperty="orderId">
-        INSERT INTO orders(user_id, total_amount, status)
-        VALUES(#{userId}, #{totalAmount}, #{status})
+        INSERT INTO orders (user_id, total_amount, status, pay_type, created_at, updated_at)
+        VALUES (#{userId}, #{totalAmount}, #{status}, #{payType}, NOW(), NOW())
+    </insert>
+
+    <!-- 插入订单项 -->
+    <insert id="insertOrderItem" parameterType="com.qxy.model.po.OrderItems">
+        INSERT INTO order_items (order_id, product_id, quantity, price, created_at, updated_at)
+        VALUES (#{orderId}, #{productId}, #{quantity}, #{price}, NOW(), NOW())
     </insert>
 </mapper>

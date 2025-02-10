@@ -14,6 +14,7 @@ public interface  AiProductDao {
  * @date 2025/2/3 20:15
  * @version 1.0
  */
+
      List<Product> searchProductsByName(@Param("keyword") String keywordS);
-     int decreaseStock(@Param("productId") Integer productId, @Param("quantity") Integer quantity);
+     void decreaseStock(@Param("productId") Integer productId, @Param("quantity") Integer quantity);
 }

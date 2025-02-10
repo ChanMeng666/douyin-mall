@@ -60,6 +60,7 @@ mybatis:
 
 #Redis
 redis:
+  enabled: true
   sdk:
     config:
       host: 116.62.149.227
@@ -72,7 +73,7 @@ redis:
       retry-interval: 2000 # 增加重试间隔
       ping-interval: 60000 # 保持心跳间隔
       keep-alive: true    # 保持长连接
-
+      enabled: true
 # 日志
 logging:
   level:

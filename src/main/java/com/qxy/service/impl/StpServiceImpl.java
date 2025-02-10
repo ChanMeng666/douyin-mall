@@ -33,7 +33,7 @@ public class StpServiceImpl implements StpInterface {
      */
     @Override
     public List<String> getPermissionList(Object loginId, String loginType) {
-        Integer useId = userDao.getUserInfoByUserName(loginId.toString()).getUserId();
+        Integer useId = userDao.getUserInfoByLoginId(loginId.toString()).getUserId();
         return permissionDao.getPermissionByUserId(useId);
     }
 

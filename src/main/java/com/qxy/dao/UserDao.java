@@ -43,6 +43,13 @@ public interface UserDao {
     User getUserInfoByPhone(String phone);
 
     /**
+     * 通过loginid(用户名或邮箱或手机号)获取User类的成员
+     * @param loginid
+     * @return User
+     */
+    User getUserInfoByLoginId(String loginid);
+
+    /**
      * 通过用户名获取用户密码
      * @param userName
      * @return

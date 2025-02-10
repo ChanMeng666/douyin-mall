@@ -9,7 +9,6 @@
         <result column="phone" property="phone" />
         <result column="created_at" property="createdAt" />
         <result column="updated_at" property="updatedAt" />
-        <result column="status" property="status" />
     </resultMap>
 
     <select id="getUserInfoByUserId" resultType="com.qxy.model.po.User" >
@@ -37,9 +36,16 @@
         where username = #{username}
     </select>
 
+    <select id="getUserInfoByLoginId" resultType="com.qxy.model.po.User" resultMap="UserResultMap">
+        select * from users
+        where username = #{username}
+           or email = #{email}
+           or phone = #{phone}
+    </select>
+
     <insert id="createUser" useGeneratedKeys="true" keyProperty="userId" parameterType="com.qxy.model.po.User" >
-        insert into users (username,password,email,phone,created_at,updated_at,status)
-        values(#{userName},#{Password},#{email},#{phone},now(),now(),#{status});
+        insert into users (username,password,email,phone,created_at,updated_at)
+        values(#{userName},#{Password},#{email},#{phone},now(),now());
         insert into user_role(user_id, role_id)
         values (#{userId},#{role_id});
 

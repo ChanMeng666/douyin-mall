@@ -36,18 +36,19 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public Integer createProduct(CreateProductDTO param, MultipartFile multipartFile) {
-        String fileName = pictureService.savePicture(multipartFile);
-        //存表
+        // 上传图片到OSS并获取CDN的URL
+        String imageUrl = pictureService.upload(multipartFile);
+
+        // 存表
         ProductDO productDO = new ProductDO();
         productDO.setName(param.getName());
         productDO.setDescription(param.getDescription());
         productDO.setStock(param.getStock());
         productDO.setPrice(param.getPrice());
-        productDO.setImageUrl(fileName);
+        productDO.setImageUrl(imageUrl);
         int row = productMapper.insert(productDO);
-        if(row != 1) {
-            log.warn(ResponseCode.UN_ERROR.getInfo());
-            throw new AppException(ResponseCode.UN_ERROR.getCode(),ResponseCode.UN_ERROR.getInfo());
+        if (row != 1) {
+            throw new AppException(ResponseCode.UN_ERROR.getCode(), ResponseCode.UN_ERROR.getInfo());
         }
         return productDO.getProductId();
     }

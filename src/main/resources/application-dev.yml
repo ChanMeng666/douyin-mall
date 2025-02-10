@@ -80,9 +80,6 @@ logging:
     root: info
   config: classpath:logback-spring.xml
 
-#图片上传路径
-pic:
-  local-path: D:/PIC
 
 #通义千问的API-KEY
 dashscope:
@@ -104,3 +101,11 @@ sa-token:
   token-style: uuid
   # 是否输出操作日志
   is-log: true
+
+#阿里云oss配置
+aliyun:
+  oss:
+   endpoint: https://oss-cn-beijing.aliyuncs.com
+   accessKeyId: LTAI5tEeQAGv1CjKXxasS2Lz
+   accessKeySecret: 1LAlRjejysxM9W9GCm3qM3wPPHbD4C
+   bucketName: douyinmall1

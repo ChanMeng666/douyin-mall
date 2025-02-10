@@ -41,7 +41,7 @@ public class ProductController {
      */
     @RequestMapping("/pic/upload")
     public String uploadPic (MultipartFile multipartFile) {
-        return pictureService.savePicture(multipartFile);
+        return pictureService.upload(multipartFile);
     }
 
     /**

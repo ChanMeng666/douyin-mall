@@ -12,6 +12,8 @@ import lombok.Data;
 public class LoginDTO {
     /** 用户名*/
     private String userName;
+    /** 邮箱*/
+    private String email;
     /** 密码*/
     private String password;
 

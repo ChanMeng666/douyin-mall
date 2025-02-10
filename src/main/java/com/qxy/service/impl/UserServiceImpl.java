@@ -31,14 +31,26 @@ public class UserServiceImpl implements UserService {
         if(!StpUtil.isLogin()) {
             String username = logindto.getUserName();
             String password = logindto.getPassword();
-            if (userDao.getUserInfoByUserName(username) == null) return new SaResult(401,"用户名不存在",null);
-            else if (userDao.getUserInfoByUserName(username).getPassword().equals(password)) {
-                StpUtil.login(username);
-                SaTokenInfo tokenInfo = StpUtil.getTokenInfo();
-                return new SaResult(200,"登录成功" + tokenInfo,null);
-            } else return new SaResult(401,"密码错误，登录失败",null);
+            String email = logindto.getEmail();
+            if (userDao.getUserInfoByUserName(username) != null ) {
+                if (userDao.getUserInfoByUserName(username).getPassword().equals(password)) {
+                    StpUtil.login(username);
+                    SaTokenInfo tokenInfo = StpUtil.getTokenInfo();
+                    return new SaResult(200, "用户名登录成功" + tokenInfo, null);
+                } else return new SaResult(401, "密码错误，登录失败", null);
+            }
+            else if(userDao.getUserInfoByEmail(email) != null){
+                if(userDao.getUserInfoByEmail(email).getPassword().equals(password)){
+                    StpUtil.login(email);
+                    SaTokenInfo tokenInfo = StpUtil.getTokenInfo();
+                    return new SaResult(200, "邮箱登录成功" + tokenInfo, null);
+                }else return new SaResult(401, "密码错误，登录失败", null);
+            }
+            else if (userDao.getUserInfoByUserName(username) == null) return new SaResult(401, "用户名不存在", null);
+            else if (userDao.getUserInfoByEmail(email) == null) return new SaResult(401, "邮箱不存在", null);
         }
         else return new SaResult(200,"已登录，请勿重复登录"+StpUtil.getTokenInfo(),null);
+        return new SaResult(401,"登录失败，未知错误",null);
     }
 
     @Override

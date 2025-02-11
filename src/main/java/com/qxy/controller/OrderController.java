@@ -7,6 +7,7 @@ import com.qxy.controller.dto.order.*;
 import com.qxy.model.po.CartItem;
 import com.qxy.model.req.CreateOrderReq;
 import com.qxy.model.req.QueryHistoryOrderReq;
+import com.qxy.model.req.CancelOrderReq;
 import com.qxy.model.res.CreateOrderRes;
 import com.qxy.model.res.QueryHistoryOrderRes;
 import com.qxy.service.IOrderService;
@@ -78,8 +79,13 @@ public class OrderController {
 
     }
 
+    /**
+     * 查询历史订单
+     * @param queryHistoryOrderReqDto
+     * @return
+     */
     @RequestMapping(value = "/queryHistoryOrder",method = {RequestMethod.GET})
-    public Response<QueryHistoryOrderResponseDto> queryHistoryOrderByUserId(QueryHistoryOrderRequestDto queryHistoryOrderReqDto) {
+    public Response<QueryHistoryOrderResponseDto> queryHistoryOrderByUserId(@RequestBody QueryHistoryOrderRequestDto queryHistoryOrderReqDto) {
         try {
             if(null == queryHistoryOrderReqDto) {
                 throw new AppException(ResponseCode.ILLEGAL_PARAMETER.getInfo());
@@ -111,6 +117,37 @@ public class OrderController {
                     .code(ResponseCode.ILLEGAL_PARAMETER.getCode())
                     .info(ResponseCode.ILLEGAL_PARAMETER.getInfo())
                     .data(null)
+                    .build();
+        }
+    }
+
+    /**
+     * 取消订单
+     * @param cancelOrderRequestDto
+     * @return
+     */
+    @RequestMapping(value = "/cancelOrder",method = {RequestMethod.POST})
+    public Response<Boolean> cancelOrder(@RequestBody CancelOrderRequestDto cancelOrderRequestDto) {
+        try {
+            if(null == cancelOrderRequestDto) {
+                throw new AppException(ResponseCode.ILLEGAL_PARAMETER.getInfo());
+            }
+            log.info("取消订单请求: orderId:{}", cancelOrderRequestDto.getOrderId());
+            CancelOrderReq cancelOrderReq =  CancelOrderReq.builder()
+                    .orderId(cancelOrderRequestDto.getOrderId())
+                    .userId(cancelOrderRequestDto.getUserId())
+                    .build();
+            orderService.updateOrderStatusToCancelled(cancelOrderReq.getOrderId());
+            return Response.<Boolean>builder()
+                    .code(ResponseCode.SUCCESS.getCode())
+                    .info(ResponseCode.SUCCESS.getInfo())
+                    .data(true)
+                    .build();
+        }catch (AppException e){
+            return Response.<Boolean>builder()
+                    .code(ResponseCode.ILLEGAL_PARAMETER.getCode())
+                    .info(ResponseCode.ILLEGAL_PARAMETER.getInfo())
+                    .data(false)
                     .build();
         }
     }

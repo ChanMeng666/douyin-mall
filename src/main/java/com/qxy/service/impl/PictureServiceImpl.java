@@ -17,23 +17,27 @@ import java.util.UUID;
 @Service
 public class PictureServiceImpl implements PictureService {
 
-//    @Value("${aliyun.oss.endpoint}")
+    //    @Value("${aliyun.oss.endpoint}")
     private String endpoint = "https://oss-cn-beijing.aliyuncs.com";
 
-//    @Value("${aliyun.oss.accessKeyId}")
+    //    @Value("${aliyun.oss.accessKeyId}")
     private String accessKeyId = "LTAI5tEeQAGv1CjKXxasS2Lz";
 
-//    @Value("${aliyun.oss.accessKeySecret}")
+    //    @Value("${aliyun.oss.accessKeySecret}")
     private String accessKeySecret = "1LAlRjejysxM9W9GCm3qM3wPPHbD4C";
 
-//    @Value("${aliyun.oss.bucketName}")
+    //    @Value("${aliyun.oss.bucketName}")
     private String bucketName = "douyinmall1";
 
-    private final OSS ossClient;
+    private OSS ossClient;
 
     public PictureServiceImpl() {
         // 在构造函数中初始化 OSSClient
         this.ossClient = new OSSClientBuilder().build(endpoint, accessKeyId, accessKeySecret);
+    }
+
+    public void setOssClient(OSS ossClient) {
+        this.ossClient = ossClient;
     }
 
     @Override
@@ -44,8 +48,6 @@ public class PictureServiceImpl implements PictureService {
         String suffix = originalFilename.substring(originalFilename.lastIndexOf("."));
         String filename = UUID.randomUUID() + suffix;
 
-        // 上传到OSS
-        OSS ossClient = new OSSClientBuilder().build(endpoint, accessKeyId, accessKeySecret);
         try {
             // 上传文件到OSS
             ossClient.putObject(new PutObjectRequest(bucketName, filename, multipartFile.getInputStream()));

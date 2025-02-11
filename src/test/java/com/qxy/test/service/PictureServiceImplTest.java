@@ -19,6 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Field;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -39,6 +40,7 @@ class PictureServiceImplTest {
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
+        pictureService.setOssClient(ossClient);
     }
 
     @Test
@@ -54,7 +56,6 @@ class PictureServiceImplTest {
         assertNotNull(result);
         assertTrue(result.startsWith("https://"));
 
-        // 验证OSS上传方法被调用
         verify(ossClient, times(1)).putObject(any(PutObjectRequest.class));
     }
 
@@ -69,6 +70,6 @@ class PictureServiceImplTest {
             pictureService.savePicture(multipartFile);
         });
 
-        assertEquals("文件上传失败", exception.getMessage());
+        assertEquals("文件上传失败", exception.getInfo());
     }
 }

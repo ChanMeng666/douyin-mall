@@ -23,6 +23,4 @@ public class AiOrder {
     private Timestamp payTime;
     private Timestamp createdAt;
     private Timestamp updatedAt;
-
-
 }

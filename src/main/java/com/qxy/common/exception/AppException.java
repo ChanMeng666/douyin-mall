@@ -8,41 +8,41 @@ import lombok.EqualsAndHashCode;
 public class AppException extends RuntimeException {
 
 
-    //序列化标识符
     private static final long serialVersionUID = 5317680961212299217L;
 
-    /** 异常码 */
     private String code;
-
-    /** 异常信息 */
     private String info;
 
+    // 关键修复：所有构造方法显式传递 message 到父类
     public AppException(String code) {
+        super("");  // 初始化父类 message
         this.code = code;
+        this.info = "";
     }
 
     public AppException(String code, Throwable cause) {
+        super("", cause);  // 初始化父类 message
         this.code = code;
-        super.initCause(cause);
+        this.info = "";
     }
 
-    public AppException(String code, String message) {
+    public AppException(String code, String info) {
+        super(info);  // 核心修复：传递 info 到父类 message
         this.code = code;
-        this.info = message;
+        this.info = info;
     }
 
-    public AppException(String code, String message, Throwable cause) {
+    public AppException(String code, String info, Throwable cause) {
+        super(info, cause);  // 传递 info 到父类 message
         this.code = code;
-        this.info = message;
-        super.initCause(cause);
+        this.info = info;
     }
 
     @Override
     public String toString() {
-        return "com.qxy.common.exception.AppException{" +
-                "code='" + code + '\'' +
-                ", info='" + info + '\'' +
-                '}';
+        // 确保输出所有关键信息
+        return String.format("AppException{code='%s', info='%s', message='%s'}",
+                code, info, getMessage());
     }
 
 }

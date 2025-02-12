@@ -193,10 +193,5 @@ public class OrderServiceImpl implements IOrderService {
         }
     }
 
-    private Integer generateOrderNo() {
-        String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
-        Long atomicLong = redissonService.getAtomicLong("order:seq");
-        Integer sequence = atomicLong.intValue();
-        return sequence;
-    }
+
 }

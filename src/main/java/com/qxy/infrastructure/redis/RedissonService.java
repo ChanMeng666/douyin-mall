@@ -23,9 +23,10 @@ public class RedissonService implements IRedisService {
     }
 
     @Override
-    public <T> void setValue(String key, T value, long expired) {
+    public <T> void setValue(String key, T value, long expireTime, TimeUnit timeUnit) {
         RBucket<T> bucket = redissonClient.getBucket(key);
-        bucket.set(value, Duration.ofMillis(expired));
+        expireTime = timeUnit.toMillis(expireTime);
+        bucket.set(value, Duration.ofMillis(expireTime));
     }
 
     public <T> T getValue(String key) {
@@ -45,6 +46,26 @@ public class RedissonService implements IRedisService {
     @Override
     public <T> RDelayedQueue<T> getDelayedQueue(RBlockingQueue<T> rBlockingQueue) {
         return redissonClient.getDelayedQueue(rBlockingQueue);
+    }
+
+    @Override
+    public Long getExpire(String key ,TimeUnit timeUnit){
+        RBucket<?> bucket = redissonClient.getBucket(key);
+        if(!bucket.isExists()) return null;
+        long expireTime = bucket.remainTimeToLive();
+        //-1表示键未设置过期时间（永不过期）
+        //-2表示键不存在
+        if(-1 == expireTime || -2 == expireTime) return expireTime;
+        return timeUnit.convert(expireTime,TimeUnit.MILLISECONDS);
+    }
+
+    @Override
+    public Boolean setExpire(String key, long expireTime, TimeUnit timeUnit){
+        RBucket<?> bucket = redissonClient.getBucket(key);
+        if(!bucket.isExists()) return false;
+        expireTime = timeUnit.toMillis(expireTime);
+        bucket.expire(Duration.ofMillis(expireTime));
+        return true;
     }
 
     @Override
@@ -181,6 +202,7 @@ public class RedissonService implements IRedisService {
     public Long addAndGet(String key,long value) {
         return redissonClient.getAtomicLong(key).addAndGet(value);
     }
+
 
 
 }

@@ -43,12 +43,19 @@
            or phone = #{phone}
     </select>
 
-    <insert id="createUser" useGeneratedKeys="true" keyProperty="userId" parameterType="com.qxy.model.po.User" >
+    <insert id="createUser" >
         insert into users (username,password,email,phone,created_at,updated_at)
-        values(#{userName},#{Password},#{email},#{phone},now(),now());
+          values(#{user.userName},#{user.Password},#{user.email},#{user.phone},now(),now());
+        select user_id into @userid from users where username = #{user.userName};
         insert into user_role(user_id, role_id)
-        values (#{userId},#{role_id});
-
+          values (@userid,#{RoleId});
     </insert>
+
+    <delete id="deleteUserByLoginId">
+        delete from users
+        where username = #{loginId}
+           or email = #{loginId}
+           or phone = #{loginId}
+    </delete>
 
 </mapper>

@@ -1,15 +1,18 @@
 package com.qxy.controller;
 
+import cn.dev33.satoken.annotation.SaIgnore;
 import cn.dev33.satoken.stp.StpUtil;
 import cn.dev33.satoken.util.SaResult;
+import com.qxy.controller.dto.User.LoginByCodeDTO;
 import com.qxy.controller.dto.User.LoginDTO;
-import com.qxy.service.UserService;
+import com.qxy.controller.dto.User.SignUpDTO;
+import com.qxy.service.IAliSmsService;
+import com.qxy.service.IUserService;
 import com.qxy.service.impl.StpServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * @author Gloss66
@@ -20,36 +23,49 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/user/")
 public class UserController {
+
+    @Qualifier("UserService")
     @Autowired
-    private UserService userService;
+    private IUserService userService;
     @Autowired
     private StpServiceImpl stpService;
+    @Autowired
+    private IAliSmsService aliSmsService;
 
     /**
      * 用户登录
      * @param logindto 用户登录DTO
      * @return
      */
-    @RequestMapping(value ="doLogin")
+    @PostMapping(value ="doLogin")
     public SaResult doLogin(@RequestBody LoginDTO logindto) {
         log.info("*******************");
         log.info(logindto.toString());
         log.info("*******************");
         return userService.Login(logindto);
     }
+    @PostMapping(value ="LoginByCode")
+    public SaResult LoginByCode(@RequestBody LoginByCodeDTO loginByCodedto){
+        return userService.LoginBySMSCode(loginByCodedto);
+    }
 
-    @RequestMapping(value ="doLogout",produces = {"application/json;charset=UTF-8"})
+    @PostMapping(value ="doLogout",produces = {"application/json;charset=UTF-8"})
     public SaResult doLogout(){
         return userService.Logout();
     }
 
-    @RequestMapping(value ="SignUp",produces = {"application/json;charset=UTF-8"})
-    public SaResult SignUp(){
-        return userService.Logout();
+    @SaIgnore
+    @PostMapping(value ="SignUp",produces = {"application/json;charset=UTF-8"})
+    public SaResult SignUp(@RequestBody SignUpDTO signupdto){
+        return userService.SignUp(signupdto);
     }
 
+    @DeleteMapping(value ="SignOut",produces = {"application/json;charset=UTF-8"})
+    public SaResult SignOut(){
+        return userService.SignOut();
+    }
 //    @SaCheckLogin
-    @RequestMapping(value ="isLogin",produces = {"application/json;charset=UTF-8"})
+    @GetMapping(value ="isLogin",produces = {"application/json;charset=UTF-8"})
     public String isLogin() {
         return "当前会话是否登录：" + StpUtil.isLogin();
     }
@@ -74,18 +90,24 @@ public class UserController {
 ////        return "密码:";
 //    }
 //
-    @RequestMapping(value = "getLoginId",produces = {"application/json;charset=UTF-8"})
+    @GetMapping(value = "getLoginId",produces = {"application/json;charset=UTF-8"})
     public SaResult getLoginId(){
         return SaResult.ok(StpUtil.getLoginId().toString());
     }
 
-    @RequestMapping(value = "getPermission",produces = {"application/json;charset=UTF-8"})
+    @GetMapping(value = "getPermission",produces = {"application/json;charset=UTF-8"})
     public SaResult getPermission(){
         return SaResult.ok(StpUtil.getPermissionList().toString());
     }
 
-    @RequestMapping(value = "getRole",produces = {"application/json;charset=UTF-8"})
+    @GetMapping(value = "getRole",produces = {"application/json;charset=UTF-8"})
     public SaResult getRole(){
         return SaResult.ok(StpUtil.getRoleList().toString());
+    }
+
+    @PutMapping(value = "SendCode",produces = {"application/json;charset=UTF-8"})
+    public SaResult SendCode(@RequestBody LoginByCodeDTO loginByCodedto){
+        if(userService.sendCode(loginByCodedto)) return SaResult.ok("验证码发送成功");
+        return SaResult.error("发生错误");
     }
 }

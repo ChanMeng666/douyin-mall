@@ -1,6 +1,7 @@
 package com.qxy.service.impl;
 
 import com.qxy.common.exception.BusinessException;
+import com.qxy.common.response.ResponseCode;
 import com.qxy.controller.dto.ai.AiOrderRequestDTO;
 import com.qxy.controller.dto.ai.AiOrderResponseDTO;
 import com.qxy.dao.AiOrderDao;
@@ -33,11 +34,11 @@ public class AISimulationOrderServiceImpl implements AISimulationOrderService {
         Product product = aiProductMapper.searchProductsByName(keyword)
                 .stream()
                 .findFirst()
-                .orElseThrow(() -> new BusinessException("商品不存在或已下架"));
+                .orElseThrow(() -> new BusinessException(ResponseCode.FAILED_GOODS_NOT_EXISTS));
 
         // 2. 检查库存
         if (product.getStock() < 1) {
-            throw new BusinessException("库存不足");
+            throw new BusinessException(ResponseCode.STOCK_INSUFFICIENT);
         }
 
         // 3. 创建订单

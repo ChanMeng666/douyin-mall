@@ -2,8 +2,19 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.qxy.dao.AiProductDao">
     <!-- 补充其他SQL（如 MyBatis 动态 SQL） -->
-    <select id="searchProductsByName" resultType="com.qxy.model.po.Product">
-        SELECT * FROM products
+
+    <resultMap id="ProductResultMap" type="com.qxy.model.po.Product">
+        <id property="productId" column="product_id" />
+        <result property="name" column="name" />
+        <result property="description" column="description" />
+        <result property="price" column="price" />
+        <result property="stock" column="stock" />
+        <result property="imageUrl" column="image_url" />
+        <result property="status" column="status" />
+    </resultMap>
+
+    <select id="searchProductsByName" parameterType="String" resultType="com.qxy.model.po.Product" resultMap="ProductResultMap">
+        SELECT product_id, `name`, description, price, stock, image_url, status FROM products
         WHERE name LIKE CONCAT('%', #{keyword}, '%')
           AND status = 'active'
     </select>

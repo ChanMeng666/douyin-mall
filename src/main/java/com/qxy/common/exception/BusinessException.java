@@ -13,6 +13,14 @@ import lombok.Getter;
 @Getter
 public class BusinessException extends RuntimeException {
     private ResponseCode responseCode;
+    private String msg;
+    public BusinessException(ResponseCode responseCode,String msg) {
+        this.responseCode = responseCode;
+        this.msg = msg;
+    }
+    public BusinessException(String msg) {
+        this.msg = msg;
+    }
     public BusinessException(ResponseCode responseCode) {
         this.responseCode = responseCode;
     }

@@ -1,5 +1,6 @@
 package com.qxy.test.service;
 
+
 import com.qxy.common.constant.Constants;
 import com.qxy.controller.dto.order.CartItemDto;
 import com.qxy.infrastructure.redis.IRedisService;
@@ -11,7 +12,6 @@ import com.qxy.service.ProductService;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.redisson.api.RAtomicLong;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -23,6 +23,7 @@ import java.util.stream.Collectors;
 
 import static java.lang.Thread.sleep;
 
+
 /**
  * @Author: dawang
  * @Description: 单元测试类
@@ -33,18 +34,12 @@ import static java.lang.Thread.sleep;
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class OrderServiceTest {
-
-
     @Resource
     private IOrderService orderService;
-
     @Resource
     private IRedisService redisService;
-
     @Resource
     private ProductService productService;
-
-
     /**
      * 库存充足时扣减测试
      * */
@@ -52,7 +47,6 @@ public class OrderServiceTest {
     public void shouldSuccessWhenStockEnough() {
         // 初始化
         Integer productId = 1;
-
         mockRedisStock(productId, 100);
         List<CartItemDto> items = new ArrayList<>();
         CartItemDto item = CartItemDto.builder()
@@ -66,8 +60,6 @@ public class OrderServiceTest {
         CreateOrderRes response = orderService.createOrder(request);
         log.info("创建订单结果: {}", response);
     }
-
-
     /**
      * 测试库存不足回滚
      * */
@@ -92,7 +84,6 @@ public class OrderServiceTest {
         CreateOrderReq request = buildValidRequest(1,items);
         log.info("创建订单结果: {}", orderService.createOrder(request));
     }
-
     /**
      * 测试超时订单回滚
      * */
@@ -100,7 +91,6 @@ public class OrderServiceTest {
     public void shouldAutoRollbackStockWhenTimeout() throws InterruptedException {
         sleep(10000000);
     }
-
     // region 测试工具方法
     private void mockRedisStock(Integer productId, Integer stock) {
         String cacheKey = Constants.RedisKey.PRODUCT_COUNT_KEY + Constants.UNDERLINE + productId;
@@ -114,7 +104,6 @@ public class OrderServiceTest {
                 .cartItems(convertCartItems(items))
                 .build();
     }
-
     private List<CartItem> convertCartItems(List<CartItemDto> dtos) {
         List<CartItem> cartItems = dtos.stream().map(dto -> CartItem.builder()
                 .productId(dto.getProductId())

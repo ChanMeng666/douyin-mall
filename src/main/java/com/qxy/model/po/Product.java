@@ -2,6 +2,10 @@ package com.qxy.model.po;
 
 import com.qxy.model.enums.ProductStatus;
 import lombok.Data;
+
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.PositiveOrZero;
@@ -16,6 +20,8 @@ import java.sql.Timestamp;
  */
 @Data
 public class Product {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer productId;
 
     @NotBlank(message = "商品名称不能为空")

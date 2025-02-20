@@ -99,6 +99,7 @@ public class Response<T>{
      * @param <T>
      */
     public static <T> Response<T> fail(ResponseCode responseCode,T data){
+        if(responseCode==null) responseCode = ResponseCode.UN_ERROR;
         return new Response<T>(responseCode.getCode(), responseCode.getInfo(),data);
     }
 }

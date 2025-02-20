@@ -1,5 +1,6 @@
 package com.qxy.model.po;
 
+import com.qxy.common.constant.Constants;
 import lombok.Data;
 
 import java.math.BigDecimal;
@@ -22,5 +23,4 @@ public class AiOrder {
     private Timestamp payTime;
     private Timestamp createdAt;
     private Timestamp updatedAt;
-
 }

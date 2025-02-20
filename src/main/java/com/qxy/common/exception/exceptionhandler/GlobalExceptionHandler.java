@@ -37,8 +37,12 @@ public class GlobalExceptionHandler {
 //        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
         String requestURI = request.getRequestURI();
         ResponseCode responseCode = ex.getResponseCode();
-        log.error("请求地址'{}',发生业务异常: {}", requestURI, responseCode.getInfo(), ex);
-        return Response.fail(responseCode,null);
+        String msg = ex.getMsg();
+        if(responseCode==null) {
+            responseCode = ResponseCode.UN_ERROR;
+        }
+            log.error("请求地址'{}',发生业务异常: {}", requestURI, responseCode.getInfo()+", "+msg, ex);
+            return Response.fail(responseCode,msg);
     }
 
     /**

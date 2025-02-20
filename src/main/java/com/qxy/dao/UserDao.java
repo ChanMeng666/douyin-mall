@@ -1,5 +1,6 @@
 package com.qxy.dao;
 
+import com.qxy.model.po.Role;
 import com.qxy.model.po.User;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -60,5 +61,11 @@ public interface UserDao {
      * 创建用户
      * @param user
      */
-    void createUser(User user, @Param("role_id") Integer role_id);
+    void createUser(@Param("user")User user,@Param("RoleId") Integer RoleId);
+
+    /**
+     * 通过loginId删除用户
+     * @param loginId
+     */
+    void deleteUserByLoginId(@Param("loginId") String loginId);
 }

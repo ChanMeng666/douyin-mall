@@ -21,12 +21,13 @@ public interface IRedisService {
 
     /**
      * 设置指定 key 的值
-     *
+     * (可设置有效时间和时间单位)
      * @param key     键
      * @param value   值
-     * @param expired 过期时间
+     * @param expireTime 有效时间
+     * @param timeUnit 时间单位
      */
-    <T> void setValue(String key, T value, long expired);
+    <T> void setValue(String key, T value, long expireTime, TimeUnit timeUnit);
 
     /**
      * 获取指定 key 的值
@@ -62,6 +63,23 @@ public interface IRedisService {
      * @return 队列
      */
     <T> RDelayedQueue<T> getDelayedQueue(RBlockingQueue<T> rBlockingQueue);
+
+    /**
+     * 获取剩余有效时间
+     * @param key
+     * @param timeUnit
+     * @return 剩余有效时间
+     */
+    public Long getExpire(String key ,TimeUnit timeUnit);
+
+    /**
+     * 设置有效时间
+     * @param key
+     * @param expireTime
+     * @param timeUnit
+     * @return 布尔值
+     */
+    public Boolean setExpire(String key, long expireTime, TimeUnit timeUnit);
 
     /**
      * 设置值

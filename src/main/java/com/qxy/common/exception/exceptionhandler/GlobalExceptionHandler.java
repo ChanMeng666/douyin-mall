@@ -4,6 +4,8 @@ import cn.dev33.satoken.exception.*;
 import cn.dev33.satoken.util.SaResult;
 import com.qxy.common.exception.BusinessException;
 import com.qxy.common.response.Response;
+import com.qxy.common.response.ResponseCode;
+import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,24 +14,35 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
 
 @ControllerAdvice
+@Slf4j
 public class GlobalExceptionHandler {
 
     /**
      * 处理 BusinessException 异常
      */
+    @ResponseBody
     @ExceptionHandler(BusinessException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST) // 返回 400 状态码
-    public ResponseEntity<Map<String, Object>> handleBusinessException(BusinessException ex) {
-        Map<String, Object> response = new HashMap<>();
-        response.put("timestamp", System.currentTimeMillis());
-        response.put("status", HttpStatus.BAD_REQUEST.value());
-        response.put("error", "Bad Request");
-        response.put("message", ex.getMessage());
-        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+//    @ResponseStatus(HttpStatus.BAD_REQUEST) // 返回 400 状态码
+    public Response<?> handleBusinessException(BusinessException ex, HttpServletRequest request) {
+//        Map<String, Object> response = new HashMap<>();
+//        response.put("timestamp", System.currentTimeMillis());
+//        response.put("status", HttpStatus.BAD_REQUEST.value());
+//        response.put("error", "Bad Request");
+//        response.put("message", ex.getMessage());
+//        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+        String requestURI = request.getRequestURI();
+        ResponseCode responseCode = ex.getResponseCode();
+        String msg = ex.getMsg();
+        if(responseCode==null) {
+            responseCode = ResponseCode.UN_ERROR;
+        }
+            log.error("请求地址'{}',发生业务异常: {}", requestURI, responseCode.getInfo()+", "+msg, ex);
+            return Response.fail(responseCode,msg);
     }
 
     /**
@@ -39,7 +52,7 @@ public class GlobalExceptionHandler {
     @ResponseBody
     @ExceptionHandler(NotLoginException.class)
     @ResponseStatus(HttpStatus.UNAUTHORIZED) // 返回 401 状态码
-    public Response<Object> handlerNotLoginException(@NotNull NotLoginException nle) {
+    public Response<Object> handleNotLoginException(@NotNull NotLoginException nle) {
         // 打印堆栈，以供调试
         nle.printStackTrace();
         // 不同异常返回不同状态码
@@ -66,7 +79,7 @@ public class GlobalExceptionHandler {
     // 拦截：缺少权限异常
     @ResponseBody
     @ExceptionHandler(NotPermissionException.class)
-    public SaResult handlerNotPermissionException(NotPermissionException e) {
+    public SaResult handleNotPermissionException(NotPermissionException e) {
         e.printStackTrace();
         return SaResult.error("缺少权限：" + e.getPermission());
     }
@@ -74,21 +87,21 @@ public class GlobalExceptionHandler {
     // 拦截：缺少角色异常
     @ResponseBody
     @ExceptionHandler(NotRoleException.class)
-    public SaResult handlerNotRoleException(NotRoleException e) {
+    public SaResult handleNotRoleException(NotRoleException e) {
         e.printStackTrace();
         return SaResult.error("缺少角色：" + e.getRole());
     }
 
     // 拦截：二级认证校验失败异常
     @ExceptionHandler(NotSafeException.class)
-    public SaResult handlerNotSafeException(NotSafeException e) {
+    public SaResult handleNotSafeException(NotSafeException e) {
         e.printStackTrace();
         return SaResult.error("二级认证校验失败：" + e.getService());
     }
 
     // 拦截：服务封禁异常
     @ExceptionHandler(DisableServiceException.class)
-    public SaResult handlerDisableServiceException(DisableServiceException e) {
+    public SaResult handleDisableServiceException(DisableServiceException e) {
         e.printStackTrace();
         return SaResult.error("当前账号 " + e.getService() + " 服务已被封禁 (level=" + e.getLevel() + ")：" + e.getDisableTime() + "秒后解封");
     }

@@ -1,6 +1,7 @@
 package com.qxy.service;
 
 import cn.dev33.satoken.util.SaResult;
+import com.qxy.controller.dto.User.LoginByCodeDTO;
 import com.qxy.controller.dto.User.LoginDTO;
 import com.qxy.controller.dto.User.SignUpDTO;
 import org.springframework.stereotype.Repository;
@@ -11,14 +12,21 @@ import org.springframework.stereotype.Repository;
  * @description: 用户服务类
  */
 @Repository
-public interface UserService {
+public interface IUserService {
 
    /**
-    * 用户登录
+    * 用户账号登录
     * @param logindto
     * @return SaResult类
     */
    SaResult Login(LoginDTO logindto);
+
+   /**
+    * 手机验证码登录
+    * @param loginByCodedto
+    * @return SaResult
+    */
+   SaResult LoginBySMSCode(LoginByCodeDTO loginByCodedto);
 
    /**
     * 退出登录
@@ -31,4 +39,16 @@ public interface UserService {
     * @return SaResult
     */
    SaResult SignUp(SignUpDTO signupdto);
+
+   /**
+    * 用户注销
+    * @return SaResult
+    */
+   public SaResult SignOut();
+
+   /**
+    * 获取登录验证码
+    * @param loginByCodeDTO
+    */
+   boolean sendCode(LoginByCodeDTO loginByCodeDTO);
 }

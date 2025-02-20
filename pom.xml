@@ -103,6 +103,19 @@
             <artifactId>junit</artifactId>
             <scope>test</scope>
         </dependency>
+        <!--阿里云短信服务-->
+        <dependency>
+            <groupId>com.aliyun</groupId>
+            <artifactId>dysmsapi20170525</artifactId>
+            <version>3.1.1</version>
+        </dependency>
+        <!--hutool Java工具箱-->
+        <dependency>
+            <groupId>cn.hutool</groupId>
+            <artifactId>hutool-all</artifactId>
+            <version>5.8.16</version>
+        </dependency>
+
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
@@ -140,7 +153,6 @@
             <version>4.0.0</version>
             <scope>test</scope>
         </dependency>
-
 
     </dependencies>
 </project>

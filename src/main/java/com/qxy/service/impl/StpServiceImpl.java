@@ -3,7 +3,7 @@ package com.qxy.service.impl;
 /**
  * @author Gloss66
  * @version 1.0
- * @description: TODO
+ * @description: Satoken权限服务类
  */
 
 import cn.dev33.satoken.stp.StpInterface;
@@ -42,7 +42,7 @@ public class StpServiceImpl implements StpInterface {
      */
     @Override
     public List<String> getRoleList(Object loginId, String loginType) {
-        Integer useId = userDao.getUserInfoByUserName(loginId.toString()).getUserId();
+        Integer useId = userDao.getUserInfoByLoginId(loginId.toString()).getUserId();
         return roleDao.getRoleByUserId(useId);
     }
 

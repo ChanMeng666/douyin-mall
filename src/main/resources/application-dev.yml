@@ -109,3 +109,20 @@ aliyun:
    accessKeyId: LTAI5tEeQAGv1CjKXxasS2Lz
    accessKeySecret: 1LAlRjejysxM9W9GCm3qM3wPPHbD4C
    bucketName: douyinmall1
+
+#阿里云短信服务配置
+sms:
+  aliyun:
+    accessKeyId: LTAI5t6Uo6TAvUURFFe7fyfK
+    accessKeySecret: YDwez4IJkqTbmIkJogc34NVgdCWUEk
+    endpoint: dysmsapi.aliyuncs.com
+    templateCode: SMS_479025080
+    sign-name: DouyinMall66
+  #是否允许发送短信
+  send-message: true
+  #验证码有效时长 (分钟)
+  code-expiration: 5
+  #单一账号每日验证码发送数量限制
+  send-limit: 20
+  #是否允许发送验证码
+  is-send: true

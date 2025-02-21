@@ -7,7 +7,7 @@ import java.util.Map;
  * @version 1.0
  * @description: 阿里云短信服务
  */
-public interface ISmsService {
+public interface ICodeService {
 
     /**
      * 发送短信验证码
@@ -15,7 +15,14 @@ public interface ISmsService {
      * @param phone
      * @param code
      */
-    public boolean sendMobileCode(String phone, String code);
+    public boolean sendPhoneCode(String phone, String code);
+
+    /**
+     * 发送邮箱验证码
+     * @param email
+     * @param code
+     */
+    public boolean sendEmailCode(String email, String code);
 
     /**
      * 发送模板消息
@@ -29,17 +36,17 @@ public interface ISmsService {
 
     /**
      * 核对验证码
-     * @param phone
+     * @param account
      * @param code
      */
-    public void checkCode(String phone, String code);
+    public void checkCode(String account, String code);
 
     /**
-     * 获取手机验证码的键
-     * @param phone
-     * @return 手机验证码的键
+     * 获取手机或邮箱验证码的键
+     * @param account
+     * @return 手机或邮箱验证码的键
      */
-    public String getPhoneCodeKey(String phone);
+    public String getAccountCodeKey(String account);
 
     /**
      * 获取验证码有效时间的键

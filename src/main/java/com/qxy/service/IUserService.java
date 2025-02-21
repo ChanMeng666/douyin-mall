@@ -1,9 +1,7 @@
 package com.qxy.service;
 
 import cn.dev33.satoken.util.SaResult;
-import com.qxy.controller.dto.User.LoginByCodeDTO;
-import com.qxy.controller.dto.User.LoginDTO;
-import com.qxy.controller.dto.User.SignUpDTO;
+import com.qxy.controller.dto.User.*;
 import com.qxy.model.po.User;
 import org.springframework.stereotype.Repository;
 
@@ -48,10 +46,17 @@ public interface IUserService {
    public SaResult SignOut();
 
    /**
-    * 获取登录验证码
-    * @param loginByCodeDTO
+    * 获取手机短信验证码
+    * @param sendSMSCodedto
     */
-   boolean sendCode(LoginByCodeDTO loginByCodeDTO);
+   boolean sendPhoneCode(SendSMSCodeDTO sendSMSCodedto);
+
+   /**
+    * 获取邮箱验证码
+    * @param sendEmailCodedto
+    * @return
+    */
+   public boolean SendEmailCode(SendEmailCodeDTO sendEmailCodedto);
 
    /**
     * 通过当前会话的登录账号获取用户信息

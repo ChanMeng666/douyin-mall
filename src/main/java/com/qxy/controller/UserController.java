@@ -5,12 +5,10 @@ import cn.dev33.satoken.stp.StpUtil;
 import cn.dev33.satoken.util.SaResult;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.qxy.controller.dto.User.LoginByCodeDTO;
-import com.qxy.controller.dto.User.LoginDTO;
-import com.qxy.controller.dto.User.SignUpDTO;
+import com.qxy.common.tool.Validator;
+import com.qxy.controller.dto.User.*;
 import com.qxy.model.po.User;
-import com.qxy.service.ISmsService;
-import com.qxy.service.ISmsService;
+import com.qxy.service.ICodeService;
 import com.qxy.service.IUserService;
 import com.qxy.service.impl.StpServiceImpl;
 import lombok.extern.slf4j.Slf4j;
@@ -37,7 +35,7 @@ public class UserController {
     @Autowired
     private StpServiceImpl stpService;
     @Autowired
-    private ISmsService aliSmsService;
+    private ICodeService codeService;
 
     /**
      * 用户登录
@@ -101,7 +99,7 @@ public class UserController {
     }
 
     /**
-     * 通过当前会话的登录账号获取用户信息
+     * 通过当前会话的登录账号获取用户账号信息
      * @return 响应结果
      */
     @GetMapping(value = "getInfo",produces = {"application/json;charset=UTF-8"})
@@ -143,12 +141,36 @@ public class UserController {
 
     /**
      * 用户获取手机验证码
+     * @param sendSMSCodedto
+     * @return 响应结果
+     */
+    @PutMapping(value = "SendPhoneCode",produces = {"application/json;charset=UTF-8"})
+    public SaResult SendPhoneCode(@RequestBody SendSMSCodeDTO sendSMSCodedto){
+        if(userService.sendPhoneCode(sendSMSCodedto)) return SaResult.ok("验证码发送成功");
+        return SaResult.error("发生错误");
+    }
+
+    /**
+     * 用户获取邮箱验证码
+     * @param sendEmailCodedto
+     * @return 响应结果
+     */
+    @PutMapping(value = "SendEmailCode",produces = {"application/json;charset=UTF-8"})
+    public SaResult SendEmailCode(@RequestBody SendEmailCodeDTO sendEmailCodedto){
+        if(userService.SendEmailCode(sendEmailCodedto)) return SaResult.ok("验证码发送成功");
+        return SaResult.error("发生错误");
+    }
+
+    /**
+     * 核对验证码接口
      * @param loginByCodedto
      * @return 响应结果
      */
-    @PutMapping(value = "SendCode",produces = {"application/json;charset=UTF-8"})
-    public SaResult SendCode(@RequestBody LoginByCodeDTO loginByCodedto){
-        if(userService.sendCode(loginByCodedto)) return SaResult.ok("验证码发送成功");
-        return SaResult.error("发生错误");
+    @GetMapping(value = "checkCode",produces = {"application/json;charset=UTF-8"})
+    public SaResult checkCode(@RequestBody LoginByCodeDTO loginByCodedto){
+        String str = Validator.getKindOfAccount(loginByCodedto.getAccount());
+        if(str.equals("")) return SaResult.error("输入账号格式有误");
+        codeService.checkCode(loginByCodedto.getAccount(), loginByCodedto.getCode());
+        return SaResult.ok("验证码核对成功");
     }
 }

@@ -18,5 +18,7 @@ public class LoginDTO {
     private String loginId;
     /** 密码*/
     private String password;
+    /** 登录设备*/
+    private String loginDevice;
 
 }

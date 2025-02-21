@@ -3,6 +3,8 @@ package com.qxy.controller;
 import cn.dev33.satoken.annotation.SaIgnore;
 import cn.dev33.satoken.stp.StpUtil;
 import cn.dev33.satoken.util.SaResult;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.qxy.controller.dto.User.LoginByCodeDTO;
 import com.qxy.controller.dto.User.LoginDTO;
 import com.qxy.controller.dto.User.SignUpDTO;
@@ -102,7 +104,7 @@ public class UserController {
     @GetMapping(value = "getInfo",produces = {"application/json;charset=UTF-8"})
     public SaResult getInfo(){
         User user = userService.getInfoByLoginId(StpUtil.getLoginId().toString());
-        return SaResult.data(user.toString());
+        return SaResult.data(JSONObject.toJSON(user));
     }
 
     /**

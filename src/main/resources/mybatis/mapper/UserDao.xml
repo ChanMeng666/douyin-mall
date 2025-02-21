@@ -44,18 +44,24 @@
     </select>
 
     <insert id="createUser" >
+        alter table users  AUTO_INCREMENT=1;
         insert into users (username,password,email,phone,created_at,updated_at)
           values(#{user.userName},#{user.Password},#{user.email},#{user.phone},now(),now());
         select user_id into @userid from users where username = #{user.userName};
+        alter table user_role  AUTO_INCREMENT=1;
         insert into user_role(user_id, role_id)
           values (@userid,#{RoleId});
     </insert>
 
     <delete id="deleteUserByLoginId">
+        select user_id into @userid from users
+          where username = #{loginId}
+            or email = #{loginId}
+            or phone = #{loginId};
         delete from users
-        where username = #{loginId}
-           or email = #{loginId}
-           or phone = #{loginId}
+          where user_id = @userid;
+        delete from user_role
+        where user_id = @userid;
     </delete>
 
 </mapper>

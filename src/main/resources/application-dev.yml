@@ -16,7 +16,7 @@ spring:
   datasource:
     username: root
     password: 123456
-    url: jdbc:mysql://116.62.149.227:13306/douyin_mall?useUnicode=true&characterEncoding=utf8&autoReconnect=true&zeroDateTimeBehavior=convertToNull&serverTimezone=UTC&useSSL=true&allowPublicKeyRetrieval=true
+    url: jdbc:mysql://116.62.149.227:13306/douyin_mall?useUnicode=true&characterEncoding=utf8&autoReconnect=true&zeroDateTimeBehavior=convertToNull&serverTimezone=UTC&useSSL=true&allowPublicKeyRetrieval=true&allowMultiQueries=true
     driver-class-name: com.mysql.cj.jdbc.Driver
     hikari:
       connection-timeout: 30000

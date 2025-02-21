@@ -6,7 +6,9 @@ import cn.dev33.satoken.util.SaResult;
 import com.qxy.controller.dto.User.LoginByCodeDTO;
 import com.qxy.controller.dto.User.LoginDTO;
 import com.qxy.controller.dto.User.SignUpDTO;
-import com.qxy.service.IAliSmsService;
+import com.qxy.model.po.User;
+import com.qxy.service.ISmsService;
+import com.qxy.service.ISmsService;
 import com.qxy.service.IUserService;
 import com.qxy.service.impl.StpServiceImpl;
 import lombok.extern.slf4j.Slf4j;
@@ -30,7 +32,7 @@ public class UserController {
     @Autowired
     private StpServiceImpl stpService;
     @Autowired
-    private IAliSmsService aliSmsService;
+    private ISmsService aliSmsService;
 
     /**
      * 用户登录
@@ -44,67 +46,97 @@ public class UserController {
         log.info("*******************");
         return userService.Login(logindto);
     }
+
+    /**
+     * 验证码登录
+     * @param loginByCodedto
+     * @return 响应结果
+     */
     @PostMapping(value ="LoginByCode")
     public SaResult LoginByCode(@RequestBody LoginByCodeDTO loginByCodedto){
         return userService.LoginBySMSCode(loginByCodedto);
     }
 
+    /**
+     * 用户登出
+     * @return 响应结果
+     */
     @PostMapping(value ="doLogout",produces = {"application/json;charset=UTF-8"})
     public SaResult doLogout(){
         return userService.Logout();
     }
 
+    /**
+     * 用户注册
+     * @param signupdto
+     * @return 响应结果
+     */
     @SaIgnore
     @PostMapping(value ="SignUp",produces = {"application/json;charset=UTF-8"})
     public SaResult SignUp(@RequestBody SignUpDTO signupdto){
         return userService.SignUp(signupdto);
     }
 
+    /**
+     * 用户注销
+     * @return 响应结果
+     */
     @DeleteMapping(value ="SignOut",produces = {"application/json;charset=UTF-8"})
     public SaResult SignOut(){
         return userService.SignOut();
     }
-//    @SaCheckLogin
+
+    /**
+     * 获取会话登录状态
+     * @return 响应结果
+     */
     @GetMapping(value ="isLogin",produces = {"application/json;charset=UTF-8"})
-    public String isLogin() {
-        return "当前会话是否登录：" + StpUtil.isLogin();
+    public SaResult isLogin() {
+        return SaResult.data("当前会话是否登录：" + StpUtil.isLogin());
     }
 
-////    @SaCheckLogin
-//    @RequestMapping(value = "getUsername",produces = {"application/json;charset=UTF-8"})
-//    public String getUsername(Integer id){
-//        System.out.println(userService.getUserInfoByUserId(id));
-//        return "用户名："+ userService.getUserInfoByUserId(id).getPassword();
-//    }
-//
-//    @SaCheckLogin
-//    @RequestMapping(value = "getPassWord",produces = {"application/json;charset=UTF-8"})
-//    public String getPassWord(String username){
-//        if(userService.getUserInfoByUserName(username) == null)
-//            log.info("userService为null");
-//        else
-//            log.info("userService不为null");
-//        System.out.println("userService:"+userService.getUserInfoByUserName(username));
-//
-//        return "密码:"+ userService.getUserInfoByUserName(username).getPassword();
-////        return "密码:";
-//    }
-//
+    /**
+     * 通过当前会话的登录账号获取用户信息
+     * @return 响应结果
+     */
+    @GetMapping(value = "getInfo",produces = {"application/json;charset=UTF-8"})
+    public SaResult getInfo(){
+        User user = userService.getInfoByLoginId(StpUtil.getLoginId().toString());
+        return SaResult.data(user.toString());
+    }
+
+    /**
+     * 获取当前会话的登录账号
+     * @return 响应结果
+     */
     @GetMapping(value = "getLoginId",produces = {"application/json;charset=UTF-8"})
     public SaResult getLoginId(){
         return SaResult.ok(StpUtil.getLoginId().toString());
     }
 
+    /**
+     * 获取用户权限信息
+     * @return 响应结果
+     */
     @GetMapping(value = "getPermission",produces = {"application/json;charset=UTF-8"})
     public SaResult getPermission(){
         return SaResult.ok(StpUtil.getPermissionList().toString());
     }
 
+    /**
+     * 获取用户身份信息
+     * @return 响应结果
+     */
     @GetMapping(value = "getRole",produces = {"application/json;charset=UTF-8"})
     public SaResult getRole(){
         return SaResult.ok(StpUtil.getRoleList().toString());
     }
 
+    /**
+     * 用户获取手机验证码
+     * @param loginByCodedto
+     * @return 响应结果
+     */
     @PutMapping(value = "SendCode",produces = {"application/json;charset=UTF-8"})
     public SaResult SendCode(@RequestBody LoginByCodeDTO loginByCodedto){
         if(userService.sendCode(loginByCodedto)) return SaResult.ok("验证码发送成功");

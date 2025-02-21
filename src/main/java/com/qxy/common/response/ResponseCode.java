@@ -25,8 +25,6 @@ public enum ResponseCode {
     FAILED_GOODS_NOT_EXISTS("GOODS_NOT_EXISTS","商品不存在或已下架"),
 
     ;
-
     private String code;
     private String info;
-
 }

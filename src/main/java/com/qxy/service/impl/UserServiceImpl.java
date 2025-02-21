@@ -15,7 +15,7 @@ import com.qxy.controller.dto.User.SignUpDTO;
 import com.qxy.dao.UserDao;
 import com.qxy.infrastructure.redis.IRedisService;
 import com.qxy.model.po.User;
-import com.qxy.service.IAliSmsService;
+import com.qxy.service.ISmsService;
 import com.qxy.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -44,7 +44,7 @@ public class UserServiceImpl implements IUserService {
     @Autowired
     private IRedisService redisService;
     @Autowired
-    private IAliSmsService aliSmsService;
+    private ISmsService aliSmsService;
     @Value("${sms.code-expiration:}")
     private Long phoneCodeExpiration;
 
@@ -84,12 +84,12 @@ public class UserServiceImpl implements IUserService {
         if(!StpUtil.isLogin()) {
             String phone = loginByCodedto.getPhone();
             String code = loginByCodedto.getCode();
-            String phoneCodeKey = getPhoneCodeKey(phone);
+            String phoneCodeKey = aliSmsService.getPhoneCodeKey(phone);
             if(code==null || phone==null) return new SaResult(401,"参数不能为空",null);
             User user = userDao.getUserInfoByLoginId(phone);
             if(user == null) return new SaResult(401, "手机号还未注册", null);
             //核对验证码
-            checkCode(phone, code);
+            aliSmsService.checkCode(phone, code);
             //核对成功，则登录
             StpUtil.login(phone);
             SaTokenInfo tokenInfo = StpUtil.getTokenInfo();
@@ -116,7 +116,7 @@ public class UserServiceImpl implements IUserService {
         String password = signupdto.getPassword();
         String phone = signupdto.getPhone();
         String code = signupdto.getCode();
-        String phoneCodeKey = getPhoneCodeKey(phone);
+        String phoneCodeKey = aliSmsService.getPhoneCodeKey(phone);
         if(username==null || phone==null) return new SaResult(401,"参数不能为空",null);
         if(!Validator.isValidUsername(username)) return new SaResult(401,"用户名格式错误",null);
         else if(!Validator.isValidPassword(password)) return new SaResult(401,"密码格式错误",null);
@@ -127,16 +127,16 @@ public class UserServiceImpl implements IUserService {
         else if (userDao.getUserInfoByPhone(phone)!=null)
             return new SaResult(200,"手机号已注册",phone);
         else {
-            //核对验证码
-            checkCode(phone,code);
+//            //核对验证码
+//            aliSmsService.checkCode(phone,code);
             //核对成功则允许注册
             User user = new User();
             user.setUserName(username);
             user.setPassword(password);
             user.setPhone(phone);
             userDao.createUser(user,Constants.ROLE_USER);
-            //用户创建成功，则删除缓存的验证码
-            redisService.remove(phoneCodeKey);
+//            //用户创建成功，则删除缓存的验证码
+//            redisService.remove(phoneCodeKey);
             return new SaResult(200,"注册成功",user);
         }
     }
@@ -162,12 +162,12 @@ public class UserServiceImpl implements IUserService {
 //        else if(null == userDao.getUserInfoByPhone(phone)){
 //            throw new BusinessException(ResponseCode.FAILED_UNREGISTERED);
 //        }
-        String phoneCodeKey = getPhoneCodeKey(phone);
+        String phoneCodeKey = aliSmsService.getPhoneCodeKey(phone);
         Long expire = redisService.getExpire(phoneCodeKey, TimeUnit.SECONDS);
         if (expire != null && (phoneCodeExpiration * 60 - expire) < 60 ){
             throw new BusinessException(ResponseCode.FAILED_FREQUENT);
         }
-        String codeTimeKey = getCodeTimeKey(phone);
+        String codeTimeKey = aliSmsService.getCodeTimeKey(phone);
         Long sendTimes = redisService.getAtomicLong(codeTimeKey);
         if (sendTimes != 0 && sendTimes >= sendLimit) {
             throw new BusinessException(ResponseCode.FAILED_TIME_LIMIT);
@@ -190,39 +190,9 @@ public class UserServiceImpl implements IUserService {
         return true;
     }
 
-    /**
-     * 核对验证码
-     * @param phone
-     * @param code
-     */
-    private void checkCode(String phone, String code) {
-        String phoneCodeKey = getPhoneCodeKey(phone);
-        String cacheCode = redisService.getValue(phoneCodeKey);
-        if (StrUtil.isEmpty(cacheCode)) {
-            throw new BusinessException(ResponseCode.FAILED_INVALID_CODE);
-        }
-        if (!cacheCode.equals(code)) {
-            throw new BusinessException(ResponseCode.FAILED_ERROR_CODE);
-        }
-        //验证码比对成功
-
+    @Override
+    public User getInfoByLoginId(String loginId){
+        return userDao.getUserInfoByLoginId(loginId);
     }
 
-    /**
-     * 获取手机验证码的键
-     * @param phone
-     * @return 手机验证码的键
-     */
-    private String getPhoneCodeKey(String phone) {
-        return Constants.PHONE_CODE_KEY + phone;
-    }
-
-    /**
-     * 获取验证码有效时间的键
-     * @param phone
-     * @return 验证码有效时间的键
-     */
-    private String getCodeTimeKey(String phone) {
-        return Constants.CODE_TIME_KEY + phone;
-    }
 }

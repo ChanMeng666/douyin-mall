@@ -4,6 +4,7 @@ import cn.dev33.satoken.util.SaResult;
 import com.qxy.controller.dto.User.LoginByCodeDTO;
 import com.qxy.controller.dto.User.LoginDTO;
 import com.qxy.controller.dto.User.SignUpDTO;
+import com.qxy.model.po.User;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -51,4 +52,10 @@ public interface IUserService {
     * @param loginByCodeDTO
     */
    boolean sendCode(LoginByCodeDTO loginByCodeDTO);
+
+   /**
+    * 通过当前会话的登录账号获取用户信息
+    * @param loginId
+    */
+   User getInfoByLoginId(String loginId);
 }

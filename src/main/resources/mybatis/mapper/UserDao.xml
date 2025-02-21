@@ -54,14 +54,12 @@
     </insert>
 
     <delete id="deleteUserByLoginId">
-        select user_id into @userid from users
-          where username = #{loginId}
-            or email = #{loginId}
-            or phone = #{loginId};
-        delete from users
-          where user_id = @userid;
-        delete from user_role
-        where user_id = @userid;
+        DELETE u, ur
+        FROM users u
+                 LEFT JOIN user_role ur ON u.user_id = ur.user_id
+        WHERE u.username = #{loginId}
+           OR u.email = #{loginId}
+           OR u.phone = #{loginId};
     </delete>
 
 </mapper>

@@ -8,13 +8,19 @@
     </resultMap>
 
     <select id="getPermissionByUserId" resultType="java.lang.String" >
-        select permission_code
-        from permission p , users u , user_permission up
-        where u.user_id = #{userId}
-          and u.user_id = up.user_id
-          and up.permission_id = p.permission_id
+        SELECT p.permission_code
+        FROM users u
+                 JOIN user_role ur ON u.user_id = ur.user_id
+                 JOIN role_permission rp ON ur.role_id = rp.role_id
+                 JOIN permission p ON rp.permission_id = p.permission_id
+        WHERE u.user_id = 6
+        UNION
+        SELECT p.permission_code
+        FROM users u
+                 JOIN user_permission up ON u.user_id = up.user_id
+                 JOIN permission p ON up.permission_id = p.permission_id
+        WHERE u.user_id = 6;
     </select>
-
 
 </mapper>
 

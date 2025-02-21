@@ -18,6 +18,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * @author Gloss66
  * @version 1.0
@@ -104,7 +107,11 @@ public class UserController {
     @GetMapping(value = "getInfo",produces = {"application/json;charset=UTF-8"})
     public SaResult getInfo(){
         User user = userService.getInfoByLoginId(StpUtil.getLoginId().toString());
-        return SaResult.data(JSONObject.toJSON(user));
+        Map<String,String > map = new HashMap<>();
+        map.put("phone",user.getPhone());
+        map.put("userName",user.getUserName());
+        map.put("email",user.getEmail());
+        return SaResult.data(map);
     }
 
     /**

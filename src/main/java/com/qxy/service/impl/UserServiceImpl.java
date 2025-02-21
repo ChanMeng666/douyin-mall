@@ -1,5 +1,6 @@
 package com.qxy.service.impl;
 
+import cn.dev33.satoken.secure.SaSecureUtil;
 import cn.hutool.core.util.RandomUtil;
 import cn.dev33.satoken.stp.SaTokenInfo;
 import cn.dev33.satoken.stp.StpUtil;
@@ -68,6 +69,7 @@ public class UserServiceImpl implements IUserService {
             User userinfo =userDao.getUserInfoByLoginId(loginId);
             if(userinfo!=null){
                 String pw = userinfo.getPassword();
+                password = SaSecureUtil.sha256(password);
                 if(pw.equals(password)) {
                     StpUtil.login(loginId);
                     SaTokenInfo tokenInfo = StpUtil.getTokenInfo();
@@ -132,6 +134,7 @@ public class UserServiceImpl implements IUserService {
             //核对成功则允许注册
             User user = new User();
             user.setUserName(username);
+            password = SaSecureUtil.sha256(password);
             user.setPassword(password);
             user.setPhone(phone);
             userDao.createUser(user,Constants.ROLE_USER);

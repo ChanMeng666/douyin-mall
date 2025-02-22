@@ -16,7 +16,7 @@ spring:
   datasource:
     username: root
     password: 123456
-    url: jdbc:mysql://116.62.149.227:13306/douyin_mall?useUnicode=true&characterEncoding=utf8&autoReconnect=true&zeroDateTimeBehavior=convertToNull&serverTimezone=UTC&useSSL=true&allowPublicKeyRetrieval=true
+    url: jdbc:mysql://116.62.149.227:13306/douyin_mall?useUnicode=true&characterEncoding=utf8&autoReconnect=true&zeroDateTimeBehavior=convertToNull&serverTimezone=UTC&useSSL=true&allowPublicKeyRetrieval=true&allowMultiQueries=true
     driver-class-name: com.mysql.cj.jdbc.Driver
     hikari:
       connection-timeout: 30000
@@ -121,8 +121,30 @@ sms:
   #是否允许发送短信
   send-message: true
   #验证码有效时长 (分钟)
-  code-expiration: 5
+  Code-expiration: 5
   #单一账号每日验证码发送数量限制
   send-limit: 20
   #是否允许发送验证码
   is-send: true
+
+#邮箱验证服务配置
+emailCode:
+  #是否允许发送邮箱验证码
+  is-send: true
+  #发送邮件的服务器
+  #126邮箱为smtp.126.com  163邮箱为smtp.163.com  QQ为smtp.qq.com
+  HostName: smtp.163.com
+  #编码格式
+  Charset: UTF-8
+  #发送邮箱账号
+  emailAccount: matrices142@163.com
+  #发送人
+  emailSender: Douyin-Mall
+  #IMAP/SMTP服务的密码
+  AuthPassword: NA76f8rrTvzgpWAv
+  #验证码有效时长 (分钟)
+  Code-expiration: 5
+  #是否使用安全链接
+  SSLOnConnect: true
+  #邮箱验证码发送数量限制
+  send-limit: 20

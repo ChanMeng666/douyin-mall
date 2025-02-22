@@ -10,7 +10,7 @@ public class Constants {
     public final static String SPACE = " ";
     public final static String UNDERLINE = "_";
     public final static String DEFAULT_CODE = "123456";
-    public final static String PHONE_CODE_KEY = "p:c:";
+    public final static String ACCOUNT_CODE_KEY = "a:c:";
     public final static String CODE_TIME_KEY = "c:t:";
     public final static Integer ROLE_ADMIN = 1;
     public final static Integer ROLE_USER = 2;

@@ -68,6 +68,24 @@ public class RedisTestController {
         }
     }
 
+    @GetMapping("/getStringValue")
+    public Response<String> getStringValue(@RequestParam String key){
+        try {
+            Object value = redisService.getValue(key);
+            Long expireTime = redisService.getExpire(key,TimeUnit.SECONDS);
+            String data = "Redis测试成功! key="+key+", value=" + value.toString() + ", ValueType="
+                    + value.getClass().getName() +", expireTime="+ expireTime
+                    ;
+            return Response.<String>success(ResponseCode.SUCCESS, data);
+        } catch (Exception e) {
+            if(!redisService.isExists(key))
+                return Response.<String> fail(ResponseCode.UN_ERROR.getCode()
+                        ,"不存在此键值对", e.getMessage());
+            return Response.<String>fail(ResponseCode.UN_ERROR.getCode()
+                    ,"Redis连接测试失败: ", e.getMessage());
+        }
+    }
+
     @GetMapping("/InsertNum")
     public Response<String> InsertNum(@RequestParam String key,
                                    @RequestParam Long value,

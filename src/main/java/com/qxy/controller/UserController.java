@@ -5,6 +5,9 @@ import cn.dev33.satoken.stp.StpUtil;
 import cn.dev33.satoken.util.SaResult;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.qxy.common.constant.Constants;
+import com.qxy.common.response.Response;
+import com.qxy.common.response.ResponseCode;
 import com.qxy.common.tool.Validator;
 import com.qxy.controller.dto.User.*;
 import com.qxy.model.po.User;
@@ -14,6 +17,7 @@ import com.qxy.service.impl.StpServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.jdbc.core.namedparam.NamedParameterUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -43,11 +47,10 @@ public class UserController {
      * @return
      */
     @PostMapping(value ="doLogin")
-    public SaResult doLogin(@RequestBody LoginDTO logindto) {
-        log.info("*******************");
-        log.info(logindto.toString());
-        log.info("*******************");
-        return userService.Login(logindto);
+    public Response<?> doLogin(@RequestBody LoginDTO logindto) {
+        if(userService.Login(logindto))
+          return Response.success(ResponseCode.LOGIN_SUCCESS,StpUtil.getTokenInfo());
+        return Response.fail(ResponseCode.LOGIN_ERROR,null);
     }
 
     /**
@@ -56,8 +59,10 @@ public class UserController {
      * @return 响应结果
      */
     @PostMapping(value ="LoginByCode")
-    public SaResult LoginByCode(@RequestBody LoginByCodeDTO loginByCodedto){
-        return userService.LoginBySMSCode(loginByCodedto);
+    public Response<?> LoginByCode(@RequestBody LoginByCodeDTO loginByCodedto){
+        if(userService.LoginByCode(loginByCodedto))
+            return Response.success(ResponseCode.LOGIN_SUCCESS,StpUtil.getTokenInfo());
+        return Response.fail(ResponseCode.LOGIN_ERROR,null);
     }
 
     /**
@@ -65,8 +70,10 @@ public class UserController {
      * @return 响应结果
      */
     @PostMapping(value ="doLogout",produces = {"application/json;charset=UTF-8"})
-    public SaResult doLogout(){
-        return userService.Logout();
+    public Response<?> doLogout(){
+        if(userService.Logout())
+            return Response.success();
+        return Response.fail();
     }
 
     /**
@@ -75,9 +82,11 @@ public class UserController {
      * @return 响应结果
      */
     @SaIgnore
-    @PostMapping(value ="SignUp",produces = {"application/json;charset=UTF-8"})
-    public SaResult SignUp(@RequestBody SignUpDTO signupdto){
-        return userService.SignUp(signupdto);
+    @PostMapping(value ="USER/SignUp",produces = {"application/json;charset=UTF-8"})
+    public Response<?> SignUp(@RequestBody SignUpDTO signupdto){
+        if(userService.SignUp(signupdto, Constants.ROLE_USER))
+            return Response.success();
+        return Response.fail();
     }
 
     /**
@@ -85,8 +94,10 @@ public class UserController {
      * @return 响应结果
      */
     @DeleteMapping(value ="SignOut",produces = {"application/json;charset=UTF-8"})
-    public SaResult SignOut(){
-        return userService.SignOut();
+    public Response<?> SignOut(){
+        if(userService.SignOut())
+            return Response.success();
+        return Response.fail();
     }
 
     /**
@@ -94,8 +105,8 @@ public class UserController {
      * @return 响应结果
      */
     @GetMapping(value ="isLogin",produces = {"application/json;charset=UTF-8"})
-    public SaResult isLogin() {
-        return SaResult.data("当前会话是否登录：" + StpUtil.isLogin());
+    public Response<?> isLogin() {
+        return Response.success("200","当前会话是否登录: " + StpUtil.isLogin());
     }
 
     /**
@@ -103,13 +114,13 @@ public class UserController {
      * @return 响应结果
      */
     @GetMapping(value = "getInfo",produces = {"application/json;charset=UTF-8"})
-    public SaResult getInfo(){
+    public Response<?> getInfo(){
         User user = userService.getInfoByLoginId(StpUtil.getLoginId().toString());
         Map<String,String > map = new HashMap<>();
         map.put("phone",user.getPhone());
         map.put("userName",user.getUserName());
         map.put("email",user.getEmail());
-        return SaResult.data(map);
+        return Response.success("200","获取成功",map);
     }
 
     /**
@@ -117,8 +128,9 @@ public class UserController {
      * @return 响应结果
      */
     @GetMapping(value = "getLoginId",produces = {"application/json;charset=UTF-8"})
-    public SaResult getLoginId(){
-        return SaResult.ok(StpUtil.getLoginId().toString());
+    public Response<?> getLoginId(){
+        if(StpUtil.getLoginId()==null) return Response.fail("404","LoginId为空");
+        return Response.success("200","获取成功",StpUtil.getLoginId().toString());
     }
 
     /**
@@ -126,8 +138,8 @@ public class UserController {
      * @return 响应结果
      */
     @GetMapping(value = "getPermission",produces = {"application/json;charset=UTF-8"})
-    public SaResult getPermission(){
-        return SaResult.ok(StpUtil.getPermissionList().toString());
+    public Response<?> getPermission(){
+        return Response.success("200","获取成功",StpUtil.getPermissionList().toString());
     }
 
     /**
@@ -135,8 +147,8 @@ public class UserController {
      * @return 响应结果
      */
     @GetMapping(value = "getRole",produces = {"application/json;charset=UTF-8"})
-    public SaResult getRole(){
-        return SaResult.ok(StpUtil.getRoleList().toString());
+    public Response<?> getRole(){
+        return Response.success("200","获取成功",StpUtil.getRoleList().toString());
     }
 
     /**
@@ -145,9 +157,9 @@ public class UserController {
      * @return 响应结果
      */
     @PutMapping(value = "SendPhoneCode",produces = {"application/json;charset=UTF-8"})
-    public SaResult SendPhoneCode(@RequestBody SendSMSCodeDTO sendSMSCodedto){
-        if(userService.sendPhoneCode(sendSMSCodedto)) return SaResult.ok("验证码发送成功");
-        return SaResult.error("发生错误");
+    public Response<?> SendPhoneCode(@RequestBody SendSMSCodeDTO sendSMSCodedto){
+        if(userService.sendPhoneCode(sendSMSCodedto)) return Response.success("200","验证码发送成功");
+        return Response.fail("500","发生错误");
     }
 
     /**
@@ -156,9 +168,9 @@ public class UserController {
      * @return 响应结果
      */
     @PutMapping(value = "SendEmailCode",produces = {"application/json;charset=UTF-8"})
-    public SaResult SendEmailCode(@RequestBody SendEmailCodeDTO sendEmailCodedto){
-        if(userService.SendEmailCode(sendEmailCodedto)) return SaResult.ok("验证码发送成功");
-        return SaResult.error("发生错误");
+    public Response<?> SendEmailCode(@RequestBody SendEmailCodeDTO sendEmailCodedto){
+        if(userService.SendEmailCode(sendEmailCodedto)) return Response.success("200","验证码发送成功");
+        return Response.fail("500","发生错误");
     }
 
     /**
@@ -167,10 +179,10 @@ public class UserController {
      * @return 响应结果
      */
     @GetMapping(value = "checkCode",produces = {"application/json;charset=UTF-8"})
-    public SaResult checkCode(@RequestBody LoginByCodeDTO loginByCodedto){
+    public Response<?> checkCode(@RequestBody LoginByCodeDTO loginByCodedto){
         String str = Validator.getKindOfAccount(loginByCodedto.getAccount());
-        if(str.equals("")) return SaResult.error("输入账号格式有误");
+        if(str.equals("")) return Response.fail(ResponseCode.ILLEGAL_INPUT_FORMAT, null);
         codeService.checkCode(loginByCodedto.getAccount(), loginByCodedto.getCode());
-        return SaResult.ok("验证码核对成功");
+        return Response.success("200","验证码核对成功");
     }
 }

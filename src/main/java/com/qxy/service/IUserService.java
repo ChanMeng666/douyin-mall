@@ -18,32 +18,32 @@ public interface IUserService {
     * @param logindto
     * @return SaResult类
     */
-   SaResult Login(LoginDTO logindto);
+   Boolean Login(LoginDTO logindto);
 
    /**
-    * 手机验证码登录
+    * 手机/邮箱验证码登录
     * @param loginByCodedto
     * @return SaResult
     */
-   SaResult LoginBySMSCode(LoginByCodeDTO loginByCodedto);
+   Boolean LoginByCode(LoginByCodeDTO loginByCodedto);
 
    /**
     * 退出登录
     * @return SaResult
     */
-   SaResult Logout();
+   Boolean Logout();
 
    /**
     * 用户注册
     * @return SaResult
     */
-   SaResult SignUp(SignUpDTO signupdto);
+   Boolean SignUp(SignUpDTO signupdto, Integer RoleId);
 
    /**
     * 用户注销
     * @return SaResult
     */
-   public SaResult SignOut();
+    Boolean SignOut();
 
    /**
     * 获取手机短信验证码

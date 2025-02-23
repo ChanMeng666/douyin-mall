@@ -2,11 +2,13 @@ package com.qxy.common.exception.exceptionhandler;
 
 import cn.dev33.satoken.exception.*;
 import cn.dev33.satoken.util.SaResult;
+import com.alibaba.fastjson2.JSON;
 import com.qxy.common.exception.BusinessException;
 import com.qxy.common.response.Response;
 import com.qxy.common.response.ResponseCode;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.expression.spel.ast.NullLiteral;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -37,11 +39,11 @@ public class GlobalExceptionHandler {
 //        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
         String requestURI = request.getRequestURI();
         ResponseCode responseCode = ex.getResponseCode();
-        String msg = ex.getMsg();
+        Object msg = ex.getMsg();
         if(responseCode==null) {
             responseCode = ResponseCode.UN_ERROR;
         }
-            log.error("请求地址'{}',发生业务异常: {}", requestURI, responseCode.getInfo()+", "+msg, ex);
+            log.error("请求地址'{}',发生业务异常: {}", requestURI, responseCode.getInfo()+", "+JSON.toJSON(msg) , ex);
             return Response.fail(responseCode,msg);
     }
 
@@ -52,7 +54,7 @@ public class GlobalExceptionHandler {
     @ResponseBody
     @ExceptionHandler(NotLoginException.class)
     @ResponseStatus(HttpStatus.UNAUTHORIZED) // 返回 401 状态码
-    public Response<Object> handleNotLoginException(@NotNull NotLoginException nle) {
+    public Response<?> handleNotLoginException(@NotNull NotLoginException nle) {
         // 打印堆栈，以供调试
         nle.printStackTrace();
         // 不同异常返回不同状态码
@@ -70,10 +72,7 @@ public class GlobalExceptionHandler {
         } else {
             message = "当前会话未登录";
         }
-//        Response response = new Response("401",message,null);
-//        // 返回给前端
-//        response.result("401",message,null);
-        return new Response<Object>("401",message,null);
+        return new Response<>("401",message,null);
     }
 
     // 拦截：缺少权限异常

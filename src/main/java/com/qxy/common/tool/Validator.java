@@ -36,11 +36,10 @@ public class Validator {
     }
 
     public static String getKindOfAccount(String account){
-        String str;
+        String str = "";
         if(Validator.isValidEmail(account)) str = "邮箱";
         else if(Validator.isValidPhoneNumber(account)) str = "手机号";
         else if(Validator.isValidUsername(account)) str = "用户名";
-        else str = "";
         return str;
     }
 }

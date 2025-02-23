@@ -76,4 +76,61 @@ pic:
 # AI 服务配置
 dashscope:
   api-key: test-api-key
-  model: test-model 
+  model: test-model
+
+############## Sa-Token 配置  ##############
+sa-token:
+  # token 名称（同时也是 cookie 名称）
+  token-name: satoken
+  # token 有效期（单位：秒） 默认30天，-1 代表永久有效
+  timeout: 2592000
+  # token 最低活跃频率（单位：秒），如果 token 超过此时间没有访问系统就会被冻结，默认-1 代表不限制，永不冻结
+  active-timeout: -1
+  # 是否允许同一账号多地同时登录 （为 true 时允许一起登录, 为 false 时新登录挤掉旧登录）
+  is-concurrent: true
+  # 在多人登录同一账号时，是否共用一个 token （为 true 时所有登录共用一个 token, 为 false 时每次登录新建一个 token）
+  is-share: false
+  # token 风格（默认可取值：uuid、simple-uuid、random-32、random-64、random-128、tik）
+  token-style: uuid
+  # 是否输出操作日志
+  is-log: true
+
+#阿里云短信服务配置
+sms:
+  aliyun:
+    accessKeyId: LTAI5t6Uo6TAvUURFFe7fyfK
+    accessKeySecret: YDwez4IJkqTbmIkJogc34NVgdCWUEk
+    endpoint: dysmsapi.aliyuncs.com
+    templateCode: SMS_479025080
+    sign-name: DouyinMall66
+  #是否允许发送短信
+  send-message: true
+  #验证码有效时长 (分钟)
+  Code-expiration: 5
+  #单一账号每日验证码发送数量限制
+  send-limit: 20
+  #是否允许发送验证码
+  is-send: true
+
+#邮箱验证服务配置
+emailCode:
+  #是否允许发送邮箱验证码
+  is-send: true
+  #发送邮件的服务器
+  #126邮箱为smtp.126.com  163邮箱为smtp.163.com  QQ为smtp.qq.com
+  HostName: smtp.163.com
+  #编码格式
+  Charset: UTF-8
+  #发送邮箱账号
+  emailAccount: matrices142@163.com
+  #发送人
+  emailSender: Douyin-Mall
+  #IMAP/SMTP服务的密码
+  AuthPassword: NA76f8rrTvzgpWAv
+  #验证码有效时长 (分钟)
+  Code-expiration: 5
+  #是否使用安全链接
+  SSLOnConnect: true
+  #邮箱验证码发送数量限制
+  send-limit: 20
+

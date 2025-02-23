@@ -5,7 +5,7 @@ import cn.hutool.core.util.RandomUtil;
 import cn.dev33.satoken.stp.SaTokenInfo;
 import cn.dev33.satoken.stp.StpUtil;
 import cn.dev33.satoken.util.SaResult;
-import cn.hutool.core.util.StrUtil;
+import com.alibaba.fastjson2.JSON;
 import com.qxy.common.constant.Constants;
 import com.qxy.common.exception.BusinessException;
 import com.qxy.common.response.ResponseCode;
@@ -54,41 +54,43 @@ public class UserServiceImpl implements IUserService {
     private boolean emailCode_isSend;  //emailCode开关打开：true  开关关闭false
 
     @Override
-    public SaResult Login(LoginDTO logindto){
+    public Boolean Login(LoginDTO logindto){
         if(!StpUtil.isLogin()) {
             String loginId = logindto.getLoginId();
             String password = logindto.getPassword();
-            if(loginId.equals("") || password.equals("")) return new SaResult(401,"参数不能为空",null);
+            if(loginId==null||password==null||loginId.equals("")||password.equals(""))
+                throw new BusinessException(ResponseCode.FAILED_VOID_PARAMETER);
             String str = Validator.getKindOfAccount(loginId);
-            if(str.equals("")) return new SaResult(401, "输入账号格式错误", null);
+            if(str.equals(""))
+                throw new BusinessException(ResponseCode.ILLEGAL_INPUT_FORMAT);
             User userinfo =userDao.getUserInfoByLoginId(loginId);
             if(userinfo!=null){
                 String pw = userinfo.getPassword();
                 password = SaSecureUtil.sha256(password);
                 if(pw.equals(password)) {
                     StpUtil.login(loginId,logindto.getLoginDevice());
-                    SaTokenInfo tokenInfo = StpUtil.getTokenInfo();
-                    return new SaResult(200, str+"登录成功, "+StpUtil.getLoginDevice(), tokenInfo);
-                }else return new SaResult(401, "密码错误，登录失败", null);
+                    return true;
+                }else throw new BusinessException(ResponseCode.FAILED_ERROR_PASSWORD);
             }
-            else return new SaResult(401, str+"不存在", null);
+            else throw new BusinessException(ResponseCode.FAILED_USER_NOT_EXIST, str+"未注册");
         }
-        else return new SaResult(200,"已登录，请勿重复登录",StpUtil.getTokenInfo());
+        else throw new BusinessException(ResponseCode.FAILED_REPEAT_LOGIN, StpUtil.getTokenInfo());
     }
 
     @Override
-    public SaResult LoginBySMSCode(LoginByCodeDTO loginByCodedto){
+    public Boolean LoginByCode(LoginByCodeDTO loginByCodedto){
         if(!StpUtil.isLogin()) {
             String account = loginByCodedto.getAccount();
             String code = loginByCodedto.getCode();
             String accountCodeKey = codeService.getAccountCodeKey(account);
-            if(code==null || account==null) return new SaResult(401,"参数不能为空",null);
+            if(code==null||account==null||code.equals("")||account.equals(""))
+                throw new BusinessException(ResponseCode.FAILED_VOID_PARAMETER);
             User user = userDao.getUserInfoByLoginId(account);
             String kindOfAccount = Validator.getKindOfAccount(account);
             if(kindOfAccount.equals("")||kindOfAccount.equals("用户名"))
-                return new SaResult(401, "输入账号格式错误", null);
+                throw new BusinessException(ResponseCode.ILLEGAL_INPUT_FORMAT);
             if(user == null)
-                return new SaResult(401, kindOfAccount+"还未注册", null);
+                throw new BusinessException(ResponseCode.FAILED_USER_NOT_EXIST, kindOfAccount+"未注册");
             //核对验证码
             codeService.checkCode(account, code);
             //核对成功，则登录
@@ -96,63 +98,69 @@ public class UserServiceImpl implements IUserService {
             SaTokenInfo tokenInfo = StpUtil.getTokenInfo();
             //登录成功，则删除缓存的验证码
             redisService.remove(accountCodeKey);
-            return new SaResult(200, kindOfAccount+"验证码登录成功", tokenInfo);
+            return true;
         }
-        else return new SaResult(200,"已登录，请勿重复登录",StpUtil.getTokenInfo());
+        else throw new BusinessException(ResponseCode.FAILED_REPEAT_LOGIN, StpUtil.getTokenInfo());
     }
 
     @Override
-    public SaResult Logout(){
+    public Boolean Logout(){
         if(StpUtil.isLogin()) {
             StpUtil.logout(StpUtil.getLoginId(),StpUtil.getLoginDevice());
-            return new SaResult(200,"成功退出登录",null);
+            return true;
         }
-        else return new SaResult(401,"您还未登录",null);
+        else throw new BusinessException(ResponseCode.FAILED_NOT_LOGIN);
     }
 
     @Transactional
     @Override
-    public SaResult SignUp(@NotNull SignUpDTO signupdto){
+    public Boolean SignUp(@NotNull SignUpDTO signupdto, Integer RoleId){
         String username = signupdto.getUserName();
         String password = signupdto.getPassword();
         String phone = signupdto.getPhone();
+        String email = signupdto.getEmail();
         String code = signupdto.getCode();
-        String accountCodeKey = codeService.getAccountCodeKey(phone);
-        if(username==null || phone==null) return new SaResult(401,"参数不能为空",null);
-        if(!Validator.isValidUsername(username)) return new SaResult(401,"用户名格式错误",null);
-        else if(!Validator.isValidPassword(password)) return new SaResult(401,"密码格式错误",null);
-        else if(!Validator.isValidPhoneNumber(phone)) return new SaResult(401,"手机号格式错误",null);
-        //未注册
+        String accountCodeKey = codeService.getAccountCodeKey(email);
+        if(username==null||phone==null||username.equals("")||phone.equals(""))
+            throw new BusinessException(ResponseCode.FAILED_VOID_PARAMETER);
+        if(!Validator.isValidUsername(username)||!Validator.isValidPassword(password)
+                ||!Validator.isValidPhoneNumber(phone))
+            throw new BusinessException(ResponseCode.ILLEGAL_INPUT_FORMAT);
+
         if(userDao.getUserInfoByUserName(username)!=null)
-            return new SaResult(200,"用户名已存在",username);
+            throw new BusinessException(ResponseCode.FAILED_USER_EXIST,"用户名已存在");
         else if (userDao.getUserInfoByPhone(phone)!=null)
-            return new SaResult(200,"手机号已注册",phone);
+            throw new BusinessException(ResponseCode.FAILED_USER_EXIST,"手机号已注册");
+        else if (userDao.getUserInfoByEmail(email)!=null)
+            throw new BusinessException(ResponseCode.FAILED_USER_EXIST,"邮箱已注册");
         else {
-//            //核对验证码
-//            codeService.checkCode(phone,code);
+            //核对验证码
+            codeService.checkCode(email,code);
             //核对成功则允许注册
             User user = new User();
             user.setUserName(username);
             password = SaSecureUtil.sha256(password);
             user.setPassword(password);
             user.setPhone(phone);
-            userDao.createUser(user,Constants.ROLE_USER);
-//            //用户创建成功，则删除缓存的验证码
-//            redisService.remove(accountCodeKey);
-            return new SaResult(200,"注册成功",user);
+            user.setEmail(email);
+            userDao.createUser(user,RoleId);
+            //用户创建成功，则删除缓存的验证码
+            redisService.remove(accountCodeKey);
+            return true;
         }
     }
 
     @Override
-    public SaResult SignOut(){
-        if(!StpUtil.isLogin()) return new SaResult(401,"您还未登录！",null);
+    public Boolean SignOut(){
+        if(!StpUtil.isLogin())
+            throw new BusinessException(ResponseCode.FAILED_NOT_LOGIN);
         try{
             userDao.deleteUserByLoginId(StpUtil.getLoginId().toString());
             StpUtil.logout();
         }catch (Exception e){
-            return new SaResult(401,"注销失败",e.getMessage());
+            throw new BusinessException(ResponseCode.FAILED_SIGN_OUT);
         }
-        return new SaResult(200,"注销成功",null);
+        return true;
     }
 
     @Override
@@ -193,7 +201,7 @@ public class UserServiceImpl implements IUserService {
     public boolean SendEmailCode(@NotNull SendEmailCodeDTO sendEmailCodedto){
         String email = sendEmailCodedto.getEmail();
         if (!Validator.isValidEmail(email)) {
-            throw new BusinessException(ResponseCode.FAILED_USER_PHONE);
+            throw new BusinessException(ResponseCode.FAILED_USER_EMAIL);
         }
         String emailCodeKey = codeService.getAccountCodeKey(email);
         Long expire = redisService.getExpire(emailCodeKey, TimeUnit.SECONDS);

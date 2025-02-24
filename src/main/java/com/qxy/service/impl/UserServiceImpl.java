@@ -56,7 +56,7 @@ public class UserServiceImpl implements IUserService {
     @Override
     public Boolean Login(LoginDTO logindto){
         if(!StpUtil.isLogin()) {
-            String loginId = logindto.getLoginId();
+            String loginId = logindto.getAccount();
             String password = logindto.getPassword();
             if(loginId==null||password==null||loginId.equals("")||password.equals(""))
                 throw new BusinessException(ResponseCode.FAILED_VOID_PARAMETER);

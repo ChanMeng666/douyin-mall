@@ -59,7 +59,7 @@ public interface IUserService {
    public boolean SendEmailCode(SendEmailCodeDTO sendEmailCodedto);
 
    /**
-    * 通过当前会话的登录账号获取用户信息
+    * 通过登录账号获取用户信息
     * @param loginId
     */
    User getInfoByLoginId(String loginId);

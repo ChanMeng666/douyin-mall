@@ -10,12 +10,8 @@ import lombok.Data;
 
 @Data
 public class LoginDTO {
-//    /** 用户名*/
-//    private String userName;
-//    /** 邮箱*/
-//    private String email;
     /** 登录账号*/
-    private String loginId;
+    private String account;
     /** 密码*/
     private String password;
     /** 登录设备*/

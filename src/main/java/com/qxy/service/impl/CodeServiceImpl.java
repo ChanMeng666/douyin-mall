@@ -125,10 +125,6 @@ public class CodeServiceImpl implements ICodeService {
             mail.addTo(email);
             /*设置邮件的主题*/
             mail.setSubject("DouyinMall验证码");
-//            String msg = "+---+   +---+   +---+   +---+   +---+   +---+   +---+   +---+   +---+   +---+   +---+\n" +
-//                    "| D |   | O |   | U |   | Y |   | I |   | N |   | - |   | M |   | A |   | L |   | L |\n" +
-//                    "+---+   +---+   +---+   +---+   +---+   +---+   +---+   +---+   +---+   +---+   +---+\n"+
-//                    "尊敬的用户:您的验证码: " + code + " , 有效期为 "+expiration+" 分钟"+" , 您正在进行注册/登录验证，请勿泄露与他人!";
             String MSG = "DDDD      OOO     U   U    Y   Y   III   N   N       M   M     AAA     L        L  \n" +
                          "D   D    O   O    U   U     Y Y     I    NN  N       MM MM    A   A    L        L  \n" +
                          "D   D    O   O    U   U      Y      I    N N N  ---  M M M    AAAAA    L        L  \n" +

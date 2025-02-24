@@ -78,6 +78,32 @@ public class ProductController {
     }
 
     /**
+     * 根据商品名查询商品
+     * @param name
+     * @return
+     */
+    @RequestMapping("/getByName")
+    public Response<FindProductListDTO> getProductByName(String name) {
+        if(null == name || name.length() == 0) {
+            log.warn("请求参数为空");
+            return Response.success();
+        }
+        ProductRes product = productService.selectByName(name);
+        FindProductListDTO productDTO = new FindProductListDTO();
+        productDTO.setProductId(product.getProductId());
+        productDTO.setName(product.getName());
+        productDTO.setStock(product.getStock());
+        productDTO.setPrice(product.getPrice());
+        productDTO.setDescription(product.getDescription());
+        productDTO.setImageUrl(product.getImageUrl());
+        return Response.<FindProductListDTO>builder()
+                .code(ResponseCode.SUCCESS.getCode())
+                .info(ResponseCode.SUCCESS.getInfo())
+                .data(productDTO)
+                .build();
+    }
+
+    /**
      * 展示商品列表
      * @return
      */

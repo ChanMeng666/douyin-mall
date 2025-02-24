@@ -36,6 +36,14 @@ public class Constants {
         public static final String PRODUCT_COUNT_KEY = "product_count_key";
 
         public static final String PRODUCT_QUEUE_KEY = "product_queue_Key";
+
+        public static final long PRODUCT_INFO_NULL_EXPIRE_TIME = 60;
+
+        public static final String PRODUCT_LIST_KEY = "product:list";
+        public static final long PRODUCT_LIST_EXPIRE_TIME = 600;
+
+        public static final String PRODUCT_INFO_KEY = "product:info";
+        public static final long PRODUCT_INFO_EXPIRE_TIME = 3600;
         // 生成带前缀的key
         public static String getKey(String prefix, String key) {
             return prefix + key;

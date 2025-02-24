@@ -36,6 +36,14 @@
         </where>
     </select>
 
+    <select id="selectByName" resultMap="ProductResultMap">
+        select * from products
+        <where>
+            name = #{name}
+            and status = 'active'
+        </where>
+    </select>
+
     <update id="reduceProductStock">
         update products set stock = stock - #{quantity} 
         where product_id = #{productId} and stock >= #{quantity}

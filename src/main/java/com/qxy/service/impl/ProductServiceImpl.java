@@ -21,6 +21,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.annotation.Resource;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @Service
@@ -29,8 +30,10 @@ public class ProductServiceImpl implements ProductService {
     private static final Logger log = LoggerFactory.getLogger(ProductServiceImpl.class);
     @Autowired
     ProductDao productMapper;
+
     @Autowired
     PictureService pictureService;
+
     @Resource
     private RedissonService redissonService;
 
@@ -55,19 +58,50 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public ProductRes getProductById(Integer productId) {
+        // 先查询缓存
+        String cacheKey = Constants.RedisKey.PRODUCT_INFO_KEY + Constants.UNDERLINE + productId;
+        ProductRes productRes = redissonService.getValue(cacheKey);
+        if (productRes != null) {
+            return productRes;
+        }
+
+        // 缓存中没有，查询数据库
         ProductDO productDO = productMapper.selectById(productId);
         if (productDO == null) {
+            // 缓存空对象，防止缓存穿透
+            redissonService.setValue(cacheKey, new ProductRes(),
+                    Constants.RedisKey.PRODUCT_INFO_NULL_EXPIRE_TIME, TimeUnit.SECONDS);
             return null;
         }
-        return convertToRES(productDO);
+
+        // 将查询结果存入缓存
+        productRes = convertToRES(productDO);
+        redissonService.setValue(cacheKey, productRes,
+                Constants.RedisKey.PRODUCT_INFO_EXPIRE_TIME, TimeUnit.SECONDS);
+
+        return productRes;
     }
 
     @Override
     public List<ProductRes> listProducts() {
+        // 先查询缓存
+        String cacheKey = Constants.RedisKey.PRODUCT_LIST_KEY;
+        List<ProductRes> productResList = redissonService.getValue(cacheKey);
+        if (productResList != null) {
+            return productResList;
+        }
+
+        // 缓存中没有，查询数据库
         List<ProductDO> productDOs = productMapper.selectAll();
-        return productDOs.stream()
+        productResList = productDOs.stream()
                 .map(this::convertToRES)
                 .collect(Collectors.toList());
+
+        // 将查询结果存入缓存
+        redissonService.setValue(cacheKey, productResList,
+                Constants.RedisKey.PRODUCT_LIST_EXPIRE_TIME, TimeUnit.SECONDS);
+
+        return productResList;
     }
 
     @Override
@@ -94,7 +128,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public void updateProduct(UpdateProductDTO param) {
-        //构造更新对象
+        // 更新数据库
         ProductDO productDO = new ProductDO();
         productDO.setProductId(param.getProductId());
         productDO.setName(param.getName());
@@ -102,21 +136,55 @@ public class ProductServiceImpl implements ProductService {
         productDO.setStock(param.getStock());
         productDO.setPrice(param.getPrice());
         productDO.setDescription(param.getDescription());
-        //调用Dao
         int row = productMapper.updateProduct(productDO);
-        if(row != 1) {
+        if (row != 1) {
             log.warn(ResponseCode.UN_ERROR.getInfo());
-            throw new AppException(ResponseCode.UN_ERROR.getCode(),ResponseCode.UN_ERROR.getInfo());
+            throw new AppException(ResponseCode.UN_ERROR.getCode(), ResponseCode.UN_ERROR.getInfo());
         }
+
+        // 清除缓存
+        String cacheKey = Constants.RedisKey.PRODUCT_INFO_KEY + Constants.UNDERLINE + param.getProductId();
+        redissonService.remove(cacheKey);
     }
 
     @Override
     public void deleteProduct(Integer productId) {
+        // 删除数据库记录
         int row = productMapper.deleteProduct(productId);
-        if(row != 1) {
+        if (row != 1) {
             log.warn(ResponseCode.UN_ERROR.getInfo());
-            throw new AppException(ResponseCode.UN_ERROR.getCode(),ResponseCode.UN_ERROR.getInfo());
+            throw new AppException(ResponseCode.UN_ERROR.getCode(), ResponseCode.UN_ERROR.getInfo());
         }
+
+        // 清除缓存
+        String cacheKey = Constants.RedisKey.PRODUCT_INFO_KEY + Constants.UNDERLINE + productId;
+        redissonService.remove(cacheKey);
+    }
+
+    @Override
+    public ProductRes selectByName(String name) {
+        // 先查询缓存
+        String cacheKey = Constants.RedisKey.PRODUCT_INFO_KEY + Constants.UNDERLINE + name;
+        ProductRes productRes = redissonService.getValue(cacheKey);
+        if (productRes != null) {
+            return productRes;
+        }
+
+        // 缓存中没有，查询数据库
+        ProductDO productDO = productMapper.selectByName(name);
+        if (productDO == null) {
+            // 缓存空对象，防止缓存穿透
+            redissonService.setValue(cacheKey, new ProductRes(),
+                    Constants.RedisKey.PRODUCT_INFO_NULL_EXPIRE_TIME, TimeUnit.SECONDS);
+            return null;
+        }
+
+        // 将查询结果存入缓存
+        productRes = convertToRES(productDO);
+        redissonService.setValue(cacheKey, productRes,
+                Constants.RedisKey.PRODUCT_INFO_EXPIRE_TIME, TimeUnit.SECONDS);
+
+        return productRes;
     }
 
     private ProductRes convertToRES(ProductDO productDO) {

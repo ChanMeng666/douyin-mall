@@ -21,4 +21,6 @@ public interface ProductDao {
     int updateProduct(ProductDO productDO);
 
     int deleteProduct(Integer productId);
+
+    ProductDO selectByName(String name);
 }

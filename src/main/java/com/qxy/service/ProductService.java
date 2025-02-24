@@ -57,4 +57,11 @@ public interface ProductService {
      */
     @Transactional
     void deleteProduct(Integer productId);
+
+    /**
+     * 根据商品名查询商品
+     * @param name
+     * @return
+     */
+    ProductRes selectByName(String name);
 }

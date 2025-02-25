@@ -1,6 +1,7 @@
 package com.qxy.controller;
 
 import cn.dev33.satoken.annotation.SaIgnore;
+import cn.dev33.satoken.stp.SaTokenInfo;
 import cn.dev33.satoken.stp.StpUtil;
 import cn.dev33.satoken.util.SaResult;
 import com.alibaba.fastjson.JSON;
@@ -47,7 +48,7 @@ public class UserController {
      * @return
      */
     @PostMapping(value ="doLogin")
-    public Response<?> doLogin(@RequestBody LoginDTO logindto) {
+    public Response<?> doLogin(@RequestBody LoginDTO logindto, @RequestParam boolean isRemember) {
         if(userService.Login(logindto))
           return Response.success(ResponseCode.LOGIN_SUCCESS,StpUtil.getTokenInfo());
         return Response.fail(ResponseCode.LOGIN_ERROR,null);
@@ -184,5 +185,10 @@ public class UserController {
         if(str.equals("")) return Response.fail(ResponseCode.ILLEGAL_INPUT_FORMAT, null);
         codeService.checkCode(loginByCodedto.getAccount(), loginByCodedto.getCode());
         return Response.success("200","验证码核对成功");
+    }
+
+    @GetMapping(value = "getTokenInfo",produces = {"application/json;charset=UTF-8"})
+    public Response<?> getTokenInfo(){
+        return Response.success("200","令牌信息",StpUtil.getTokenInfo());
     }
 }

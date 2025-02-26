@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qxy.dao.UserUpdateDao">
+
+    <update id="UpdateUserNameById">
+        update users set username= #{NewName}
+          where user_id = #{UserId}
+    </update>
+
+    <update id="UpdateEmailById">
+        update users set email= #{NewEmail}
+        where user_id = #{UserId}
+    </update>
+
+    <update id="UpdatePhoneById">
+        update users set phone= #{NewPhone}
+        where user_id = #{UserId}
+    </update>
+
+    <update id="UpdatePasswordById">
+        update users set password= #{NewPassword}
+        where user_id = #{UserId}
+    </update>
+
+</mapper>

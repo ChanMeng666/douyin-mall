@@ -18,12 +18,9 @@ import javax.annotation.Resource;
 /**
  * @author Gloss66
  * @version 1.0
- * @description: TODO
+ * @description: Sa-Token 配置类
  */
 
-/**
- * Sa-Token 配置类
- */
 @Configuration
 @EnableWebMvc
 @Slf4j

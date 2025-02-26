@@ -8,7 +8,7 @@ import java.util.List;
 /**
  * @author Gloss66
  * @version 1.0
- * @description: TODO
+ * @description: 权限DAO
  */
 @Mapper
 @Repository

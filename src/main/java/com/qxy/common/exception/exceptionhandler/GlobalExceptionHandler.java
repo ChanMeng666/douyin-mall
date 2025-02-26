@@ -70,7 +70,7 @@ public class GlobalExceptionHandler {
         } else if (nle.getType().equals(NotLoginException.KICK_OUT)) {
             message = "已被系统强制下线";
         } else {
-            message = "当前会话未登录";
+            message = "当前会话被冻结";
         }
         return new Response<>("401",message,null);
     }

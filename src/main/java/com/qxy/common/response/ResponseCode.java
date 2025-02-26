@@ -30,6 +30,7 @@ public enum ResponseCode {
     FAILED_NOT_LOGIN          ("0017", "您还未登录"),
     FAILED_USER_EXIST          ("0018", "用户已存在"),
     FAILED_SIGN_OUT          ("0019", "注销失败"),
+    FAILED_PASSWORD_REUSE          ("0020", "新密码不能与原密码相同"),
     STOCK_INSUFFICIENT("STOCK_INSUFFICIENT", "库存不足"),
     FAILED_GOODS_NOT_EXISTS("GOODS_NOT_EXISTS","商品不存在或已下架"),
 

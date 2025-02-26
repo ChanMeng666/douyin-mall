@@ -1,6 +1,7 @@
 package com.qxy.service.impl;
 
 import cn.dev33.satoken.secure.SaSecureUtil;
+import cn.dev33.satoken.stp.SaLoginModel;
 import cn.hutool.core.util.RandomUtil;
 import cn.dev33.satoken.stp.SaTokenInfo;
 import cn.dev33.satoken.stp.StpUtil;
@@ -30,7 +31,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * @author Gloss66
  * @version 1.0
- * @description: TODO
+ * @description: 用户服务实现
  */
 @Service("UserService")
 public class UserServiceImpl implements IUserService {
@@ -54,10 +55,11 @@ public class UserServiceImpl implements IUserService {
     private boolean emailCode_isSend;  //emailCode开关打开：true  开关关闭false
 
     @Override
-    public Boolean Login(LoginDTO logindto){
+    public Boolean Login(LoginDTO logindto, boolean isRemember, boolean isSevenDays){
         if(!StpUtil.isLogin()) {
             String loginId = logindto.getAccount();
             String password = logindto.getPassword();
+            String device = logindto.getLoginDevice();
             if(loginId==null||password==null||loginId.equals("")||password.equals(""))
                 throw new BusinessException(ResponseCode.FAILED_VOID_PARAMETER);
             String str = Validator.getKindOfAccount(loginId);
@@ -68,7 +70,11 @@ public class UserServiceImpl implements IUserService {
                 String pw = userinfo.getPassword();
                 password = SaSecureUtil.sha256(password);
                 if(pw.equals(password)) {
-                    StpUtil.login(loginId,logindto.getLoginDevice());
+                    SaLoginModel saLoginModel = new SaLoginModel()
+                            .setDevice(device)
+                            .setIsLastingCookie(isRemember);
+                    if(isSevenDays) saLoginModel.setTimeout(86400*7);
+                    StpUtil.login(loginId,saLoginModel);
                     return true;
                 }else throw new BusinessException(ResponseCode.FAILED_ERROR_PASSWORD);
             }
@@ -78,10 +84,11 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Override
-    public Boolean LoginByCode(LoginByCodeDTO loginByCodedto){
+    public Boolean LoginByCode(LoginByCodeDTO loginByCodedto, boolean isRemember, boolean isSevenDays){
         if(!StpUtil.isLogin()) {
             String account = loginByCodedto.getAccount();
             String code = loginByCodedto.getCode();
+            String device = loginByCodedto.getLoginDevice();
             String accountCodeKey = codeService.getAccountCodeKey(account);
             if(code==null||account==null||code.equals("")||account.equals(""))
                 throw new BusinessException(ResponseCode.FAILED_VOID_PARAMETER);
@@ -93,8 +100,12 @@ public class UserServiceImpl implements IUserService {
                 throw new BusinessException(ResponseCode.FAILED_USER_NOT_EXIST, kindOfAccount+"未注册");
             //核对验证码
             codeService.checkCode(account, code);
+            SaLoginModel saLoginModel = new SaLoginModel()
+                                        .setDevice(device)
+                                        .setIsLastingCookie(isRemember);
+            if(isSevenDays) saLoginModel.setTimeout(86400*7);
             //核对成功，则登录
-            StpUtil.login(account,loginByCodedto.getLoginDevice());
+            StpUtil.login(account,saLoginModel);
             SaTokenInfo tokenInfo = StpUtil.getTokenInfo();
             //登录成功，则删除缓存的验证码
             redisService.remove(accountCodeKey);

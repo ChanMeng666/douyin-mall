@@ -8,7 +8,7 @@ import org.springframework.stereotype.Repository;
 /**
  * @author Gloss66
  * @version 1.0
- * @description: 用户服务类
+ * @description: 用户服务接口
  */
 @Repository
 public interface IUserService {
@@ -18,14 +18,14 @@ public interface IUserService {
     * @param logindto
     * @return SaResult类
     */
-   Boolean Login(LoginDTO logindto);
+   Boolean Login(LoginDTO logindto, boolean isRemember, boolean isSevenDays);
 
    /**
     * 手机/邮箱验证码登录
     * @param loginByCodedto
     * @return SaResult
     */
-   Boolean LoginByCode(LoginByCodeDTO loginByCodedto);
+   Boolean LoginByCode(LoginByCodeDTO loginByCodedto, boolean isRemember, boolean isSevenDays);
 
    /**
     * 退出登录

@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
 /**
  * @author Gloss66
  * @version 1.0
- * @description: TODO
+ * @description: 用户DAO
  */
 
 @Mapper

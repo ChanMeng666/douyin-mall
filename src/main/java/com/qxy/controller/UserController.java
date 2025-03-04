@@ -215,6 +215,11 @@ public class UserController {
         return Response.success("200","令牌信息",StpUtil.getTokenInfo());
     }
 
+    /**
+     * 更改用户名
+     * @param NewName
+     * @return
+     */
     @PutMapping(value = "UpdateUserName",produces = {"application/json;charset=UTF-8"})
     public Response<?> UpdateUserName(@RequestBody Map<String,String> NewName){
         if(userUpdateService.UpdateUserName(NewName.get("NewName")))
@@ -222,6 +227,11 @@ public class UserController {
         return Response.fail("401","修改失败",null);
     }
 
+    /**
+     * 更改邮箱
+     * @param NewEmail
+     * @return
+     */
     @PutMapping(value = "UpdateEmail",produces = {"application/json;charset=UTF-8"})
     public Response<?> UpdateEmail(@RequestBody Map<String,String> NewEmail){
         if(userUpdateService.UpdateEmail(NewEmail.get("NewEmail")))
@@ -229,6 +239,11 @@ public class UserController {
         return Response.fail("401","修改失败",null);
     }
 
+    /**
+     * 更改手机号
+     * @param NewPhone
+     * @return
+     */
     @PutMapping(value = "UpdatePhone",produces = {"application/json;charset=UTF-8"})
     public Response<?> UpdatePhone(@RequestBody Map<String,String> NewPhone){
         if(userUpdateService.UpdatePhone(NewPhone.get("NewPhone")))
@@ -236,6 +251,11 @@ public class UserController {
         return Response.fail("401","修改失败",null);
     }
 
+    /**
+     * 更改密码
+     * @param updatePassword
+     * @return
+     */
     @PutMapping(value = "UpdatePassword",produces = {"application/json;charset=UTF-8"})
     public Response<?> UpdatePassword(@RequestBody Map<String,String> updatePassword){
         String NewPassword = updatePassword.get("NewPassword");

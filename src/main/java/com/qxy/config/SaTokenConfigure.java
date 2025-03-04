@@ -74,21 +74,20 @@ public class SaTokenConfigure implements WebMvcConfigurer {
                     .notMatch("/user/SendEmailCode/**").notMatch("/user/getInfo/**")
                     .notMatch("/user/checkCode/**")
                     .check(r ->{
-//                        StpUtil.updateLastActiveToNow();
                         StpUtil.checkLogin();
-//                        log.info("更新前，当前登录有效时间："  + StpUtil.getTokenTimeout());
-//                        StpUtil.renewTimeout(tokenTimeout); // 更新过期时间
-//                        log.info("更新后，当前登录有效时间："  + StpUtil.getTokenTimeout());
-                    } );        // 要执行的校验动作，可以写完整的 lambda 表达式
-            // 权限拦截
+                    } );
+            // 身份拦截
             SaRouter
-                    .match("/api/product/create/**")    // 拦截的 path 列表，可以写多个 */
-//                    .match("/user/getPermission")    // 拦截的 path 列表，可以写多个 */
-                    .check(r -> StpUtil.checkPermission("add_product"));        // 要执行的校验动作，可以写完整的 lambda 表达式
-//            // 身份拦截
+                    .match("/api/product/create/**")  //创建商品
+                    .match("/api/product/pic/upload/**")  //上传商品信息
+                    .match("/api/product/delete/{productId}/**")  //删除商品
+                    .match("/api/product/update/**")  //修改商品
+                    .check(r -> StpUtil.checkRoleOr("merchant","admin"));    // 商家或管理员身份认证:拦截非商家或管理员的用户
+
+            //权限拦截
 //            SaRouter
-//                    .match("/role/**")    // 拦截的 path 列表，可以写多个 */
-//                    .check(r -> StpUtil.checkRole("user"));        // 要执行的校验动作，可以写完整的 lambda 表达式
+//                    .match("/api/product/create/**")  //创建商品
+//                    .check(r -> StpUtil.checkPermission("add_product"));
 
         })).addPathPatterns("/**")
         ;

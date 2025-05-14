@@ -1,5 +1,7 @@
 # 抖音商城项目(后端)
 
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/ChanMeng666/douyin-mall)
+
 > [!IMPORTANT]
 > 本项目是由"重生之我在青训营敲代码"团队（队伍编号：115）开发
 
